@@ -9,7 +9,7 @@
 #### 技术交流社区
 
 ##### 微信二维码:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ二维码:
-![Image text](https://gitee.com/koch/fex-wallet-app/raw/master/doc/wechat_qrcode.jpg) 
+![Image text](https://github.com/liaoqifeng/fex-wallet-app/raw/master/doc/wechat_qrcode.jpg) 
 ![Image text](doc/qq_qrcode.jpg) 
 
 
