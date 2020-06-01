@@ -1,0 +1,9 @@
+export const USER_LOGIN = 'USER_LOGIN'
+export const USER_REGISTER = 'USER_REGISTER'
+export const USER_INFO = 'USER_INFO'
+export const USER_UPDATE_PAY_PWD = 'USER_UPDATE_PAY_PWD'
+
+
+export const COMMON_COIN_LIST = 'COMMON_COIN_LIST'
+
+

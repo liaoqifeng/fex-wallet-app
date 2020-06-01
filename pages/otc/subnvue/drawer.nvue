@@ -1,0 +1,113 @@
+<template>
+    <div class="wrapper">
+		<div class="filter">
+		    <text class="filter-title">金额</text>
+			<div><input type="number" class="filter-price" placeholder="系统会为您筛选包含目标金额的商品"/></div>
+			<text class="filter-title">支付方式</text>
+			<div class="filter-pay">
+				<text class="filter-pay-item filter-active">全部</text>
+				<text class="filter-pay-item">银行卡</text>
+				<text class="filter-pay-item">支付宝</text>
+				<text class="filter-pay-item">微信</text>
+			</div>
+			<text class="filter-title">法币</text>
+			<div class="filter-pay">
+				<text class="filter-pay-item filter-active">人民币(CNY)</text>
+				<text class="filter-pay-item">美元(USD)</text>
+				<text class="filter-pay-item">港元(HKD)</text>
+			</div>
+		</div>
+		<button class="btn-wrapper"><text style="color: #fff;">筛选</text></button>
+    </div>
+</template>
+
+<script>
+    export default {
+		data() {
+			return {
+				lists: [],
+			}
+		},
+		beforeCreate() {
+			const domModule = weex.requireModule('dom')
+			domModule.addRule('fontFace', {
+				fontFamily: "unibtn",
+				'src': "url('../../../../static/uni.ttf')"
+			});
+		},
+		created() {
+			for(let i = 0; i < 5; i++){
+				this.lists.push({
+					id: i,
+					name: 'Item' + i,
+				});
+			}
+		},
+        methods: {
+            hideDrawer() {
+                uni.getCurrentSubNVue().hide('auto')
+            },
+			clickitem(e) {
+				uni.$emit('drawer-page', e);
+			}
+        }
+    }
+</script>
+
+<style lang="scss" scoped>
+	.wrapper {
+		flex-direction: column;
+		flex: 1;
+	}
+	.filter{
+		padding: 60upx 20upx 10upx 20upx;
+	}
+	.filter-title{
+		font-size: $font-lg;
+		padding-top: 40upx;
+		padding-bottom: 20upx;
+	}
+	.filter-price{
+		border-width:1rpx;  
+		border-color:$border-color-dark;  
+		border-style:solid;
+		height: 35px;
+		font-size: $font-sm;
+		padding-left: 20upx;
+	}
+	.filter-pay{
+		flex: 1;
+		flex-direction: row;
+		justify-content: space-between;
+		flex-wrap: wrap;
+	}
+	.filter-pay-item{
+		width: 200upx;
+		height: 70upx;
+		line-height: 70upx;
+		font-size: $font-sm;
+		text-align: center;
+		margin-top: 10upx;
+		margin-bottom: 10upx;
+		background-color: $border-color-base;
+	}
+	.filter-active{
+		border-width: 2rpx;
+		border-color: $font-color-blue;  
+		border-style: solid;
+		color: $font-color-blue;
+	}
+	.btn-wrapper{
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		height: 90upx;
+		line-height: 90upx;
+		background-color: $uni-color-blue;
+		color: #ffffff;
+		text-align: center;
+		border-radius: 0;
+		border-width: 0;
+	}
+</style>

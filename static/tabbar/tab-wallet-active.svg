@@ -1,0 +1,17 @@
+<svg width="2.48rem" height="2.48rem" viewBox="0 0 24 24" version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs><linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1"><stop stop-color="#BBC6D0" stop-opacity="0.606506774" offset="0%"></stop> <stop stop-color="#BBC6D0" offset="100%"></stop></linearGradient> <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2"><stop stop-color="#1890FF" stop-opacity="0.797312063" offset="0%"></stop> <stop stop-color="#1890FF" offset="100%"></stop></linearGradient></defs>
+    <g id="资讯4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="资讯_快讯4" transform="translate(-250.000000, -1079.000000)" fill-rule="nonzero">
+            <g id="tab-bar_discover" transform="translate(0.000000, 1072.000000)">
+                <g id="tab_ic_wallet_norl" transform="translate(250.000000, 7.000000)">
+                    <g transform="translate(2.500000, 3.000000)">
+                        <path d="M19,5 L9.9,5 C9.6790861,5 9.5,5.1790861 9.5,5.4 L9.5,12.6 C9.5,12.8209139 9.6790861,13 9.9,13 L19,13 L19,16.1 C19,16.8731986 18.3731986,17.5 17.6,17.5 L1.4,17.5 C0.62680135,17.5 7.6082334e-16,16.8731986 6.66133815e-16,16.1 L0,1.9 C-9.46895252e-17,1.12680135 0.62680135,0.5 1.4,0.5 L17.6,0.5 C18.3731986,0.5 19,1.12680135 19,1.9 L19,5 Z M11.4,6.5 L19,6.5 L19,11.5 L11.4,11.5 C11.1790861,11.5 11,11.3209139 11,11.1 L11,6.9 C11,6.6790861 11.1790861,6.5 11.4,6.5 Z" id="形状结合" fill="url(#linearGradient-2)"></path>
+                        <path d="M16,8.99999997 C16,9.32153901 16.171539,9.61865334 16.45,9.77942286 C16.7284609,9.94019238 17.071539,9.94019238 17.35,9.77942286 C17.6284609,9.61865334 17.8,9.32153901 17.7999999,8.99999997 C17.7999999,8.50294371 17.3970562,8.1 16.9,8.1 C16.4029437,8.1 16,8.50294371 16,8.99999997 L16,8.99999997 Z" id="路径" fill="#FFFFFF"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
