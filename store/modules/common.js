@@ -4,7 +4,8 @@ import {
 	marketList,
 	adList,
 	noticeList,
-	currencyList
+	currencyList,
+	fiatList
 } from '@/api/common'
 import {
 	COMMON_COIN_LIST
@@ -86,6 +87,17 @@ const common = {
 		}) {
 			return new Promise((resolve, reject) => {
 				currencyList().then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		fiatList({
+			commit
+		}) {
+			return new Promise((resolve, reject) => {
+				fiatList().then(res => {
 					resolve(res)
 				}).catch(error => {
 					reject(error)

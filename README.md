@@ -3,11 +3,15 @@
 #### 特别声明
 本软件属于技术开源软件, 任何使用本源码从事商业活动，对别人和自己造成损失的，本人概不负责！
 
+### Android测试包下载: [下载](http://47.107.100.112/apk/fexcoin.apk)
+
+
 #### 技术交流社区
 
-QQ群：731992394
+##### 微信二维码:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ二维码:
+![Image text](doc/wechat_qrcode.jpg) 
+![Image text](doc/qq_qrcode.jpg) 
 
-Android测试包下载: [下载](http://47.107.100.112/apk/fexcoin.apk)
 
 #### 功能规划
 1. 资产托管

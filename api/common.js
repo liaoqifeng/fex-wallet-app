@@ -42,10 +42,18 @@ export function noticeList(data) {
   })
 }
 
-// 法币列表
+// 支付信息列表
 export function currencyList() {
   return request({
     url: '/v1/common/currency',
+    method: 'GET'
+  })
+}
+
+// OTC法币列表
+export function fiatList() {
+  return request({
+    url: '/v1/common/fiat',
     method: 'GET'
   })
 }

@@ -66,11 +66,40 @@ export function applyMerchant(data) {
 	data: data
   })
 }
-
+//广告列表
+export function advertList(data) {
+  return request({
+    url: `/v1/otc/advert/list`,
+    method: 'GET',
+	data: data
+  })
+}
+//添加广告
 export function addAdvert(data) {
   return request({
     url: '/v1/otc/advert/create',
     method: 'POST',
 	data: data
+  })
+}
+//我的广告
+export function myAdvertList() {
+  return request({
+    url: `/v1/otc/advert/my`,
+    method: 'GET'
+  })
+}
+//关闭广告
+export function closeAdvert(id) {
+  return request({
+    url: `/v1/otc/advert/cancel/${id}`,
+    method: 'PUT'
+  })
+}
+//暂停开启广告
+export function pauseAdvert(id) {
+  return request({
+    url: `/v1/otc/advert/pause/${id}`,
+    method: 'PUT'
   })
 }

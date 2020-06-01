@@ -3,44 +3,59 @@
 		<view class="transfer-info">
 			<view class="w-title little-line">在线{{type==0?'购买':'出售'}}</view>
 			<view class="order-list">
-				<view class="order-item little-line">
+				<empty v-if="list == null || list.length <= 0"></empty>
+				<view v-for="(item, index) in list" :key="item.id" class="order-item little-line">
 					<view class="row user-info">
-						<view class="name"><view class="profile">111</view>ETH</view>
+						<view class="name"><view class="profile">{{item.nickname | sub}}</view>{{item.coin}}</view>
 					</view>
 					<view class="row">
-						<view class="nomarl">数量 0.0111 BTC</view>
+						<view class="nomarl">数量 {{item.volume - item.dealVolume}} BTC</view>
 						<view class="nomarl">单价</view>
 					</view>
 					<view class="row">
-						<view class="nomarl">限额￥10,000-￥55,877</view>
-						<view class="price">￥61,889344</view>
+						<view class="nomarl">限额￥{{item.minTrade}}-￥{{item.maxTrade}}</view>
+						<view class="price">￥{{item.price}}</view>
 					</view>
 					<view class="row opt">
 						<view class="pay">
-							<image src="../../../static/pay-alipay.png"></image>
-							<image src="../../../static/pay-wechat.png"></image>
+							<image v-for="(t, index) in JSON.parse(item.payment)" :key="index" :src="t | formatIconUrl"></image>
 						</view>
-						<view>
-							<!-- <button class="btn buy" @click="buy">开启</button> -->
-							<button class="btn sell" @click="buy">暂停</button>
+						<view class="btns">
+							<button v-if="item.status == 1" @click="pause(item, 0, index)" class="btn buy">开启</button>
+							<button v-if="item.status == 0" @click="pause(item, 1, index)" class="btn sell">暂停</button>
+							<button type="warn" class="btn" @click="close(item, index)">关闭</button>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-		
 	</view>
 	
 </template> 
 
 <script>
+	import {
+		mapState,
+		mapActions
+	} from 'vuex'
 	import {uniPopup} from '@dcloudio/uni-ui'
+	import empty from '../../../components/empty.vue'
 	export default {
-		components: {uniPopup},
+		components: {uniPopup, empty},
 		data() {
 			return {
-				
 			};
+		},
+		filters:{
+			sub(v){
+				if(v){
+					return v.substring(0, 1);
+				}
+				return '';
+			},
+			formatIconUrl(v){
+				return `../../../static/${v}.png`
+			}
 		},
 		props: {
 			title: {
@@ -51,22 +66,51 @@
 				type: Number,
 				default: 0
 			},
+			list: {
+				type: Array,
+				default: null
+			},
+			payments: {
+				type: Array,
+				default: null
+			}
 		},
-		onLoad(options){
-			/**
-			 * 修复app端点击除全部订单外的按钮进入时不加载数据的问题
-			 * 替换onLoad下代码即可
-			 */
-			this.loadData()
-			
-		},
-		 
 		methods: {
-			loadData(source){
+			...mapActions('otc', ['closeAdvert', 'pauseAdvert']),
+			close(item, index){
+				let $this = this
+				uni.showModal({
+				    title: '提示',
+				    content: '确定关闭广告?',
+				    success: function (res) {
+				        if (res.confirm) {
+							uni.showLoading({ title: '处理中...' });
+							$this.closeAdvert(item.id).then(res =>{
+								uni.hideLoading()
+								$this.list.splice(index, 1)
+								this.$api.msg('关闭广告成功')
+							}).catch(error =>{
+								uni.hideLoading()
+								this.$api.msg('关闭广告失败')
+							})
+				        } else if (res.cancel) {
+				        }
+				    }
+				});
 				
 			},
-			
-			buy(){
+			pause(item, status, index){
+				let $this = this
+				let tip = status == 0 ? '开启' : '暂停'
+				uni.showLoading({ title: '处理中...' });
+				$this.pauseAdvert(item.id).then(res =>{
+					uni.hideLoading()
+					$this.list[index].status = status
+					this.$api.msg(tip + '广告成功')
+				}).catch(error =>{
+					uni.hideLoading()
+					this.$api.msg(tip + '广告失败')
+				})
 				
 			}
 		},
@@ -74,6 +118,9 @@
 </script>
 
 <style lang="scss" scoped>
+	.empty-content{
+		margin-top: -150upx;
+	}
 	.transfer-info{
 		.w-title{
 			font-size: $font-md;
@@ -137,6 +184,12 @@
 					}
 					.sell{
 						background: #475F78;
+					}
+					.btns{
+						width: 300upx;
+						display: flex;
+						flex-direction: row;
+						justify-content: space-between;
 					}
 					.btn{
 						border: 0;

@@ -2,22 +2,22 @@
     <div class="wrapper">
 		<div class="filter">
 		    <text class="filter-title">金额</text>
-			<div><input type="number" class="filter-price" placeholder="系统会为您筛选包含目标金额的商品"/></div>
+			<div><input type="number" v-model="form.price" class="filter-price" placeholder="系统会为您筛选包含目标金额的商品"/></div>
 			<text class="filter-title">支付方式</text>
 			<div class="filter-pay">
-				<text class="filter-pay-item filter-active">全部</text>
-				<text class="filter-pay-item">银行卡</text>
-				<text class="filter-pay-item">支付宝</text>
-				<text class="filter-pay-item">微信</text>
+				<text class="filter-pay-item" :class="{'filter-active': form.payment == undefined}" @click="changePay(undefined)">全部</text>
+				<text class="filter-pay-item" :class="{'filter-active': form.payment == 'UnionPay'}" @click="changePay('UnionPay')">银行卡</text>
+				<text class="filter-pay-item" :class="{'filter-active': form.payment == 'Alipay'}" @click="changePay('Alipay')">支付宝</text>
+				<text class="filter-pay-item" :class="{'filter-active': form.payment == 'Wechat'}" @click="changePay('Wechat')">微信</text>
 			</div>
-			<text class="filter-title">法币</text>
+			<!-- <text class="filter-title">法币</text>
 			<div class="filter-pay">
 				<text class="filter-pay-item filter-active">人民币(CNY)</text>
 				<text class="filter-pay-item">美元(USD)</text>
 				<text class="filter-pay-item">港元(HKD)</text>
-			</div>
+			</div> -->
 		</div>
-		<button class="btn-wrapper"><text style="color: #fff;">筛选</text></button>
+		<button @click="clickitem" class="btn-wrapper"><text style="color: #fff;">筛选</text></button>
     </div>
 </template>
 
@@ -25,30 +25,28 @@
     export default {
 		data() {
 			return {
-				lists: [],
+				form: {
+					price: undefined,
+					payment: undefined
+				}
 			}
 		},
 		beforeCreate() {
-			const domModule = weex.requireModule('dom')
-			domModule.addRule('fontFace', {
-				fontFamily: "unibtn",
-				'src': "url('../../../../static/uni.ttf')"
-			});
+			
 		},
 		created() {
-			for(let i = 0; i < 5; i++){
-				this.lists.push({
-					id: i,
-					name: 'Item' + i,
-				});
-			}
+			
 		},
         methods: {
             hideDrawer() {
                 uni.getCurrentSubNVue().hide('auto')
             },
-			clickitem(e) {
-				uni.$emit('drawer-page', e);
+			clickitem() {
+				uni.$emit('filter', this.form);
+				this.hideDrawer()
+			},
+			changePay(v){
+				this.form.payment = v
 			}
         }
     }
