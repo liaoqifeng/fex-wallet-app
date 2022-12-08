@@ -41,29 +41,29 @@
 ##### 2021-09-07: 新增身份认证
 
 ##### 2021-06-25: 新增币种信息展示
-![Image text](doc/19.jpeg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/19.jpeg) 
 
 ##### 2021-06-16: 新增云算力需求
-![Image text](doc/18.jpg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/18.jpg) 
 
 ##### 2021-06-03: 新增行情预言机需求
-![Image text](doc/17.jpeg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/17.jpeg) 
 
 ##### 2021-05-13: 新增APP版本更新
 
 ##### 2021-03-03: 新增抽奖需求
-![Image text](doc/16.jpeg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/16.jpeg) 
 
 ##### 2021-01-24: 新增签到需求
-![Image text](doc/15.jpeg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/15.jpeg) 
 
 ##### 2020-10-24: 新增存币理财需求
-![Image text](doc/13.jpg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/13.jpg) 
 
 ##### 2020-06-14: 接入火币K线行情
-![Image text](doc/12.jpg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/12.jpg) 
 
-![Image text](doc/fexcoin.jpg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/fexcoin.jpg) 
 
 
 #### 安装教程
