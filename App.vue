@@ -3,27 +3,69 @@
 	 * vuex管理登陆状态，具体可以参考官方登陆模板示例
 	 */
 	import {
-		mapMutations
-	} from 'vuex';
+		mapState,
+		mapActions
+	} from 'vuex'
+	// #ifdef APP-PLUS
+	import APPUpdate from '@/uni_modules/zhouWei-APPUpdate/js_sdk/appUpdate';
+	// #endif
 	export default {
 		methods: {
-			...mapMutations(['login'])
+			...mapActions('common', ['coinList', 'getAppVersion', 'getConfig']),
+			...mapActions('user', ['initLogin']),
+			refreshConfig(){
+				this.getConfig()
+				setInterval(() => {
+					this.getConfig()
+				}, 10000)
+			},
+			async connectWs(){
+				let res = await this.getConfig()
+				let ws = 'wss://www.huobi.mw/-/s/pro/ws'
+				if(res.data && res.data.huobiDomain){
+					ws = res.data.huobiDomain
+				}
+				this.$store.dispatch('WEBSOCKET_INIT', ws)
+			}
 		},
 		onLaunch: function() {
-			/* let userInfo = uni.getStorageSync('userInfo') || '';
-			if(userInfo.id){
-				//更新登陆状态
-				uni.getStorage({
-					key: 'userInfo',
-					success: (res) => {
-						this.login(res.data);
-					}
-				});
-			} */
+			let $this = this
 			
+			$this.connectWs()
+			
+			$this.coinList()
+			
+			this.$fire.$on("refreshCoin", () => {
+				$this.coinList()
+			});
+			
+			// #ifdef APP-PLUS
+			APPUpdate();
+			// #endif
 		},
 		onShow: function() {
 			console.log('App Show')
+			this.initLogin()
+			uni.setTabBarItem({
+				index: 0,
+				text: this.$t('message').tabBar.market
+			})
+			uni.setTabBarItem({
+				index: 1,
+				text: this.$t('message').tabBar.news
+			})
+			uni.setTabBarItem({
+				index: 2,
+				text: this.$t('message').tabBar.miner
+			})
+			uni.setTabBarItem({
+				index: 3,
+				text: this.$t('message').tabBar.wallet
+			})
+			uni.setTabBarItem({
+				index: 4,
+				text: this.$t('message').tabBar.me
+			})
 		},
 		onHide: function() {
 			console.log('App Hide')
@@ -32,6 +74,14 @@
 </script>
 
 <style lang='scss'>
+	@import "uview-ui/index.scss";
+	body{
+		font-family: "Source Han Sans CN";
+	}
+	page{
+		width: 100%;
+		height: 100%;
+	}
 	/*
 		全局公共样式和字体图标
 	*/
@@ -348,7 +398,30 @@
 	  -webkit-font-smoothing: antialiased;
 	  -moz-osx-font-smoothing: grayscale;
 	}
-	
+	.icon-UnionPay{
+		font-size: 26px;
+		margin-right: 8px;
+		color: #f5a623;
+	}
+	.icon-UnionPay:before {
+	  content: "\e612";
+	}
+	.icon-Wechat{
+		font-size: 26px;
+		margin-right: 8px;
+		color: #0caf91;
+	}
+	.icon-Wechat:before {
+	  content: "\e6d8";
+	}
+	.icon-Alipay{
+		font-size: 26px;
+		margin-right: 8px;
+		color: #1296db;
+	}
+	.icon-Alipay:before {
+	  content: "\e760";
+	}
 	.icon-list-1-copy:before {
 	  content: "\e605";
 	}
@@ -602,5 +675,11 @@
 		width: 100%;
 		height: 20upx;
 		background: #EEF2F5;
+	 }
+	 .upper-text{
+		 color: $uni-color-upper
+	 }
+	 .lower-text{
+	 	 color: $uni-color-lower
 	 }
 </style>

@@ -1,73 +1,76 @@
 <template>
 	<view class="container">
 		<view class="list-cell b-b m-t" @click="navTo('/pages/user/updateLoginPwd')" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">登录密码</text>
+			<text class="cell-tit">{{i18n.accountsafe.loginpwd.title}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
 		<view class="list-cell b-b" @click="navTo('/pages/user/updatePayPwd')" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">交易密码</text>
+			<text class="cell-tit">{{i18n.accountsafe.tradepwd.title}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<!-- <view class="list-cell b-b" @click="navTo('/pages/user/updateEmail')" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">绑定/修改邮箱</text>
+		<view class="list-cell b-b" @click="navTo('/pages/user/googleSetting')" hover-class="cell-hover" :hover-stay-time="50">
+			<text class="cell-tit">{{i18n.accountsafe.googleset.title}}</text>
 			<text class="cell-more yticon icon-you"></text>
-		</view> -->
-		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
+		</view>
+		<!--<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">手势密码</text>
 			<switch color="#fa436a" @change="switchChange" />
 		</view>
 		<view v-show="isFingerprint" class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">指纹登录</text>
 			<switch color="#fa436a" @change="fingerprint" />
-		</view>
-		<view class="list-cell m-t" @click="navTo('实名认证')" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">实名认证</text>
-			<text class="cell-more yticon icon-you"></text>
-		</view>
+		</view>-->
 		
 		<!-- <view class="list-cell" @click="navTo('/pages/user/updateMobile')" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">绑定/修改手机号码</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view> -->
 		<view class="list-cell log-out-btn" @click="toLogout">
-			<text class="cell-tit">退出登录</text>
+			<text class="cell-tit">{{i18n.my.exit}}</text>
 		</view>
 		
 	</view>
 </template>
 
 <script>
-	import {  
-	    mapMutations  
-	} from 'vuex';
+	import {
+		mapState,
+		mapActions
+	} from 'vuex'
+	import {authMixin, commonMixin} from '@/common/mixin/mixin.js'
 	export default {
+		mixins: [authMixin, commonMixin],
 		data() {
 			return {
 				isFingerprint: false
 			};
 		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.accountsafe.title
+			})
+		},
 		onLoad() {
+			// #ifdef APP-PLUS
 			if(plus.fingerprint && plus.fingerprint.isSupport()) {
 				this.isFingerprint = true
 			}
+			// #endif
 		},
 		methods:{
-			...mapMutations(['logout']),
-
-			navTo(url){
-				uni.navigateTo({
-					url: url
-				})
-			},
+			...mapActions('user', ['logout']),
 			//退出登录
 			toLogout(){
+				let $this = this
 				uni.showModal({
-				    content: '确定要退出登录么',
+				    content: $this.i18n.popup.exittext,
+					cancelText: $this.i18n.popup.cancel,
+					confirmText: $this.i18n.popup.confirm,
 				    success: (e)=>{
 				    	if(e.confirm){
 				    		this.logout();
 				    		setTimeout(()=>{
-				    			uni.navigateBack();
+				    			$this.navTo('/pages/public/login')
 				    		}, 200)
 				    	}
 				    }

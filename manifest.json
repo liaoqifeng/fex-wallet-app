@@ -15,7 +15,11 @@
             "delay" : 0
         },
         "modules" : {
-            "Fingerprint" : {}
+            "Fingerprint" : {},
+            "UIWebview" : {}
+        },
+        "kernel" : {
+            "ios" : "UIWebview" //或者 "WKWebview"  
         },
         /* 模块配置 */
         "distribute" : {
@@ -35,12 +39,14 @@
                     "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
                     "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+                    "<uses-permission android:name=\"android.permission.INSTALL_PACKAGES\"/>",
                     "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+                    "<uses-permission android:name=\"android.permission.REQUEST_INSTALL_PACKAGES\"/>",
                     "<uses-permission android:name=\"android.permission.USE_FINGERPRINT\"/>",
                     "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
                     "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
@@ -51,7 +57,9 @@
             "ios" : {},
             /* ios打包配置 */
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {
+                    "gdt" : {}
+                }
             },
             "icons" : {
                 "android" : {
@@ -87,9 +95,9 @@
             },
             "splashscreen" : {
                 "android" : {
-                    "hdpi" : "C:/Users/Kivi.Liao/Desktop/Fexcoin/hdpi.png",
-                    "xhdpi" : "C:/Users/Kivi.Liao/Desktop/Fexcoin/xhdpi.png",
-                    "xxhdpi" : "C:/Users/Kivi.Liao/Desktop/Fexcoin/xxhdpi.png"
+                    "hdpi" : "/Users/fex/work/workspace/hbuilder/Fexcoin-img/hdpi.png",
+                    "xhdpi" : "/Users/fex/work/workspace/hbuilder/Fexcoin-img/xhdpi.png",
+                    "xxhdpi" : "/Users/fex/work/workspace/hbuilder/Fexcoin-img/xxhdpi.png"
                 }
             }
         }
@@ -103,6 +111,12 @@
         "appid" : "",
         "setting" : {
             "urlCheck" : true
+        }
+    },
+    "h5" : {
+        "title" : "FexWallet",
+        "router" : {
+            "base" : ""
         }
     }
 }

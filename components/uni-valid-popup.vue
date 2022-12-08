@@ -3,8 +3,8 @@
 		<view class="mask"></view>
 		<view class="popup">
 			<view class="header little-line">
-				<text class="title">安全验证</text>
-				<text class="cancel" @click="close">取消</text>
+				<text class="title">{{i18n.common.verifyTitle}}</text>
+				<text class="cancel" @click="close">{{i18n.common.cancel}}</text>
 			</view>
 			<text class="tip">{{tips[type]}}</text>
 			<view class="input-wrap" v-if="type == 'mobile'">
@@ -12,10 +12,13 @@
 				<view class="captcha" v-show="isSend">重新发送({{interval}})</view>
 				<view @click="toSend" class="captcha send" v-show="!isSend">发送验证码</view>
 			</view>
+			<view class="input-wrap" v-if="type == 'google'">
+				<input type="number" v-model="auth.code" class="input"  :placeholder="placeholders[type]"/>
+			</view>
 			<view class="input-wrap" v-if="type == 'password' || type == 'capitalPasswd'">
 				<input type="password" v-model="auth.code" class="input"  :placeholder="placeholders[type]"/>
 			</view>
-			<button type="primary" :disabled="disabled" @click="submit" class="btn">确认</button>
+			<button type="primary" :disabled="disabled" @click="submit" class="btn">{{i18n.common.ok}}</button>
 		</view>
 	</view>
 </template>
@@ -25,8 +28,10 @@
 		mapState,
 		mapActions
 	} from 'vuex'
+	import {authMixin, commonMixin} from '@/common/mixin/mixin.js'
     export default {
         name: 'UniValidPopup',
+		mixins: [commonMixin],
         props: {
         	// 开启动画
         	animation: {
@@ -61,12 +66,18 @@
 				interval: 0,
 				auth: {
 					code: undefined,
-					token: undefined
-				}
+					token: undefined,
+					type: undefined
+				},
+				timer: undefined
 			}
 		},
 		computed: {
 			...mapState('user', ['loginInfo'])
+		},
+		mounted() {
+			this.tips.capitalPasswd = this.i18n.accountsafe.tradepwd.title
+			this.placeholders.capitalPasswd = this.i18n.accountsafe.tradepwd.title
 		},
 		methods:{
 			...mapActions('common', ['sendSms']),
@@ -76,14 +87,15 @@
 					type: this.$g.CAPTCHA_TYPE.COMMON,
 					number: this.loginInfo.mobile
 				}
+				let $this = this
 				this.sendSms(data).then(res => {
 					this.auth.token = res.data
 					var i = 120;
-					let timer = setInterval(() => {
+					this.timer = setInterval(() => {
 						this.interval = i + 's'
 						i = i - 1;
 						if(i == 0){
-							clearInterval(timer);
+							clearInterval($this.timer);
 							this.isSend = false
 						}
 					}, 1000)
@@ -92,7 +104,10 @@
 				})
 			},
 			open(type) {
+				this.disabled = false
 				this.showPopup = true
+				this.auth.code = undefined
+				this.auth.token = undefined
 				if(type){
 					this.type = type
 				}
@@ -110,8 +125,12 @@
 			},
 			submit(){
 				this.disabled = true
+				if(this.timer){
+					clearInterval(this.timer);
+				}
+				this.auth.type = this.type
 				this.$emit('ok', this.auth)
-			},
+			}
 			
 		}
     }
@@ -129,6 +148,7 @@
 	}
 	.popup{
 		position: fixed;
+		max-width: 720px;
 		width: 100%;
 		height: 450upx;
 		background-color: #ffffff;

@@ -1,0 +1,248 @@
+@import '../../uni.scss';
+
+$grid_wrap_bg: #9ad3ff; //九宫格背景色(包括边框色)
+$grid_wrap_inner_bg: #61a2fc; //九宫格内层背景色
+$grid_wrap_shadow: #89bbf7; //九宫格外层下边框阴影色
+
+// 边框
+$grid_bobble_bg: #bce0e9; //边框小球颜色
+$grid_Bigball_bg: #f5fbc8; //边框大球颜色
+
+// 除了抽奖按钮外的格子样色变量
+$grid_item_color: #708abf; //每个格子的字体颜色
+$grid_item_bg: #ffffff; //每个格子的背景颜色
+$grid_item_bg_shadow: #9cd2ff; //每个格子的下边阴影颜色
+
+// 抽奖按钮格子,活动格子颜色变量
+$grid_play_btn_bg: #ff3a59; //抽奖按钮背景色
+$grid_play_btn_color: #ffffff; //抽奖按钮字体色
+$grid_play_btn_shadow: #ea0125; //抽奖按钮下边框阴影色
+
+
+
+
+
+$grid_wrap_width: 530upx; //九宫格宽度(包括边框)
+$grid_wrap_height: 530upx; //九宫格高度
+$grid_wrap_shadowSize: 12upx; //格子的阴影大小
+
+$grid_wrap_inner_width: 460upx; //九宫格内层的宽度(不包括边框)
+$grid_wrap_inner_height: 460upx; //九宫格内层的高度
+
+$grid_item_margin: 20upx; //格子与格子，格子与边框之间的距离
+$grid_item_shadowSize: 8upx; //格子的阴影大小
+$grid_item_fontSize:20upx;//格子字体大小
+$grid_play_btn_fontSize: 40upx; //抽奖按钮字体大小
+
+$grid_border_size: ($grid_wrap_width - $grid_wrap_inner_width)/2; //边框的大小（外层宽-内层宽）/2
+
+$grid_item_width: ($grid_wrap_inner_width - $grid_item_margin * 4)/3; //每个格子的宽度(内层宽-格子间距*4)/3
+$grid_item_height: ($grid_wrap_inner_width - $grid_item_margin * 4)/3; //每个格子的高度(内层高-格子间距*4)/3
+
+$grid_item_logo_width: 70upx; //每个格子内的图片宽度
+$grid_item_logo_height: 70upx; //每个格子内的图片高度度
+
+$grid_bobble_size: 17upx; //边框小球大小
+$grid_Bigball_size: 24upx; //边框大球大小
+$grid_Ball_margin: 10upx; //球与球之间的距离
+
+
+
+li {
+	list-style: none;
+}
+
+ul,
+li {
+	margin: 0;
+	padding: 0;
+}
+
+.grid_wrap {
+	background-color: $grid_wrap_bg;
+	width: $grid_wrap_width;
+	height: $grid_wrap_height;
+	position: relative;
+	border-radius: 12upx;
+	box-shadow: 0upx $grid_wrap_shadowSize 0upx 0upx $grid_wrap_shadow;
+	
+	.lottery_wrap_border {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		ul {
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			li {
+				border-radius: 50%;
+				width: $grid_bobble_size;
+				height: $grid_bobble_size;
+				background-color: $grid_bobble_bg;
+			}
+			li:nth-child(even) {
+				width: $grid_Bigball_size;
+				height: $grid_Bigball_size;
+				background-color: $grid_Bigball_bg;
+			}
+		}
+		ul:nth-child(odd) {
+			width: 100%;
+			height: $grid_border_size;
+			left: 0;
+			right: 0;
+			flex-direction: row;
+			li {
+				margin: 0 $grid_Ball_margin;
+			}
+		}
+		ul:nth-child(even) {
+			width: $grid_border_size;
+			height: 100%;
+			top: 0;
+			bottom: 0;
+			flex-direction: column;
+			li {
+				margin: $grid_Ball_margin 0;
+			}
+		}
+		ul:nth-child(3) {
+			bottom: 0;
+		}
+		ul:nth-child(4) {
+			right: 0;
+		}
+		ul:nth-child(1),
+		ul:nth-child(4) {
+			li:nth-child(odd) {
+				animation: blink_large 1s linear infinite;
+			}
+			li:nth-child(even) {
+				animation: blink_small 1s linear infinite;
+			}
+		}
+		ul:nth-child(3),
+		ul:nth-child(2) {
+			li:nth-child(even) {
+				width: $grid_bobble_size;
+				height: $grid_bobble_size;
+				background-color: $grid_bobble_bg;
+				animation: blink_large 1s linear infinite;
+			}
+			li:nth-child(odd) {
+				width: $grid_Bigball_size;
+				height: $grid_Bigball_size;
+				background-color: $grid_Bigball_bg;
+				animation: blink_small 1s linear infinite;
+			}
+		}
+	}
+	.lottery_wrap {
+		width: $grid_wrap_inner_width;
+		height: $grid_wrap_inner_height;
+		font-size: 14upx;
+		background-color: $grid_wrap_inner_bg;
+		border-radius: 12upx;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1;
+		.lottery_grid {
+			width: 100%;
+			height: 100%;
+			position: relative;
+			li {
+				width: $grid_item_width;
+				height: $grid_item_height;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				float: left;
+				position: absolute;
+				background-color: $grid_item_bg;
+				border-radius: 12upx;
+				box-shadow: 0upx $grid_item_shadowSize 0upx 0upx $grid_item_bg_shadow;
+				color: $grid_item_color;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				font-size: $grid_item_fontSize;
+				.grid_img {
+					width: $grid_item_logo_width;
+					height: $grid_item_logo_height;
+				}
+			}
+
+			.active {
+				background: $grid_play_btn_bg;
+				box-shadow: 0upx $grid_item_shadowSize 0upx 0upx $grid_play_btn_shadow;
+				color: $grid_play_btn_color;
+			}
+			li:nth-of-type(1) {
+				left: $grid_item_margin;
+				top: $grid_item_margin;
+			}
+			li:nth-of-type(2) {
+				left: $grid_item_margin * 2 + $grid_item_width;
+				top: $grid_item_margin;
+			}
+			li:nth-of-type(3) {
+				left: ($grid_item_margin * 3) + $grid_item_width * 2;
+				top: $grid_item_margin;
+			}
+			li:nth-of-type(4) {
+				left: ($grid_item_margin * 3) + $grid_item_width * 2;
+				top: $grid_item_margin * 2 + $grid_item_width;
+			}
+			li:nth-of-type(5) {
+				left: ($grid_item_margin * 3) + $grid_item_width * 2;
+				top: $grid_item_margin * 3 + $grid_item_width * 2;
+			}
+			li:nth-of-type(6) {
+				left: ($grid_item_margin * 2) + $grid_item_width * 1;
+				top: $grid_item_margin * 3 + $grid_item_width * 2;
+			}
+			li:nth-of-type(7) {
+				left: $grid_item_margin;
+				top: $grid_item_margin * 3 + $grid_item_width * 2;
+			}
+			li:nth-of-type(8) {
+				left: $grid_item_margin;
+				top: $grid_item_margin * 2 + $grid_item_width * 1;
+			}
+			// 开始抽奖按钮
+			li:nth-of-type(9) {
+				left: $grid_item_margin * 2 + $grid_item_width;
+				top: $grid_item_margin * 2 + $grid_item_width;
+				cursor: pointer;
+				background: $grid_play_btn_bg;
+				box-shadow: 0upx $grid_item_shadowSize 0upx 0upx $grid_play_btn_shadow;
+				color: $grid_play_btn_color;
+				font-size: $grid_play_btn_fontSize;
+				font-weight: bolder;
+			}
+		}
+	}
+	.lottery_finish_wrap{
+		
+	}
+}
+@keyframes blink_large {
+	to {
+		width: $grid_Bigball_size;
+		height: $grid_Bigball_size;
+		background-color: $grid_Bigball_bg;
+	}
+}
+@keyframes blink_small {
+	to {
+		width: $grid_bobble_size;
+		height: $grid_bobble_size;
+		background-color: $grid_bobble_bg;
+	}
+}

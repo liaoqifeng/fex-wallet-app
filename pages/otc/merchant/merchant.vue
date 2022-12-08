@@ -1,20 +1,24 @@
 <template>
 	<view class="container">
 		<view class="list-cell b-b m-t" @click="navTo('/pages/otc/merchant/apply', true)" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">修改资料</text>
+			<text class="cell-tit">{{i18n.otc.merchant.edit}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<view class="list-cell b-b m-t" @click="navTo('/pages/otc/merchant/advertList', true)" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">广告列表</text>
+		<view class="list-cell b-b" @click="navTo('/pages/otc/merchant/addAdvert', true)" hover-class="cell-hover" :hover-stay-time="50">
+			<text class="cell-tit">{{i18n.otc.merchant.publish}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<view class="list-cell" @click="navTo('/pages/otc/merchant/addAdvert', true)" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">发币广告</text>
+		<view class="list-cell b-b" @click="navTo('/pages/otc/merchant/advertList', true)" hover-class="cell-hover" :hover-stay-time="50">
+			<text class="cell-tit">{{i18n.otc.merchant.advertList}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<view class="list-cell log-out-btn" @click="toLogout">
-			<text class="cell-tit">退出商家</text>
+		<view class="list-cell b-b" @click="navTo('/pages/otc/merchant/orderList', true)" hover-class="cell-hover" :hover-stay-time="50">
+			<text class="cell-tit">{{i18n.otc.merchant.orderList}}</text>
+			<text class="cell-more yticon icon-you"></text>
 		</view>
+		<!--<view class="list-cell log-out-btn" @click="toLogout">
+			<text class="cell-tit">{{i18n.otc.merchant.exit}}</text>
+		</view>-->
 	</view>
 </template>
 
@@ -31,11 +35,16 @@
 				
 			};
 		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.otc.merchant.title
+			})
+		},
 		methods:{
 			//退出登录
 			toLogout(){
 				uni.showModal({
-				    content: '确定要退出登录么',
+				    content: '确定要退出承兑商?',
 				    success: (e)=>{
 				    	if(e.confirm){
 				    		this.logout();

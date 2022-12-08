@@ -1,38 +1,42 @@
 <template>
 	<view class="container">
+		<u-navbar :is-back="false" height="20">
+			<view class="slot-wrap">
+			</view>
+		</u-navbar>
 		<view class="total-box">
-			<view class="title">总资产折合(USDT)</view>
+			<view class="title">{{i18n.wallet.total}}(USDT)</view>
 			<view class="asset">
-				<text class="amount">{{data.totalUsdAmount}}</text>
-				<text class="cny">≈￥{{data.totalCnyAmount}}</text>
+				<text class="amount">{{data.totalUsdAmount | fixed(2)}}</text>
+				<text class="cny">≈￥{{data.totalCnyAmount | fixed(2)}}</text>
 			</view>
 			<view class="operat">
-				<view class="btn" @click="navTo('/pages/wallet/deposit')">充币</view>
-				<view class="btn" @click="navTo('/pages/wallet/withdraw')">提币</view>
-				<view class="btn" @click="navTo('/pages/exchange/index')">兑换</view>
+				<view class="btn" @click="navTo('/pages/wallet/deposit')">{{i18n.wallet.recharge}}</view>
+				<view class="btn" @click="navTo('/pages/wallet/withdraw')">{{i18n.wallet.withdraw}}</view>
+				<view class="btn" @click="navTo('/pages/exchange/index')">{{i18n.wallet.exchange}}</view>
 			</view>
 		</view>
 		<!-- 列表 -->
 		<view class="coin-section m-t">
-			<view v-for="(item, i) in data.list" :key="item.symbol" class="block little-line" @click="navTo('/pages/wallet/detail', true)">
+			<view v-for="(item, i) in data.list" :key="item.symbol" class="block little-line" >
 				<view class="s-row">
 					<view class="col">
 						<image :src="item.icon" class="coinLogo"></image>
 						<text class="coin">{{item.symbol}}</text>
 					</view>
 					<view class="col r light">
-						<uni-icons type="forward" size="20" class="gt"></uni-icons>
+						<!--<uni-icons type="forward" size="20" class="gt"></uni-icons>-->
 					</view>
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-title">可用</view>
-					<view class="col subtitle row-title">冻结</view>
-					<view class="col r subtitle row-title">折合(CNY)</view>
+					<view class="col subtitle row-title">{{i18n.wallet.avalible}}</view>
+					<view class="col subtitle row-title">{{i18n.wallet.frozen}}</view>
+					<view class="col r subtitle row-title">{{i18n.wallet.amount}}(CNY)</view>
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-amount">{{item.normalBalance}}</view>
-					<view class="col subtitle row-amount">{{item.frozenBalance}}</view>
-					<view class="col r subtitle row-amount">{{item.priceCny}}</view>
+					<view class="col subtitle row-amount">{{item.normalBalance | fixed(item.showPrecision)}}</view>
+					<view class="col subtitle row-amount">{{item.frozenBalance | fixed(item.showPrecision)}}</view>
+					<view class="col r subtitle row-amount">{{item.priceCny | fixed(2)}}</view>
 				</view>
 			</view>
 			
@@ -60,7 +64,12 @@
 			};
 		},
 		onShow(){
-			this.loadData();
+			if(this.loginInfo.hasLogin){
+				this.loadData();
+			}
+			uni.setNavigationBarTitle({
+				title: this.i18n.wallet.title
+			})
 		},
 		onPullDownRefresh() {
 			this.loadData();
@@ -81,15 +90,22 @@
 	}
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 	.container{
-		padding: 0upx 0upx;
+		padding: 0upx 20upx;
+	}
+	.slot-wrap{
+		padding: 20upx 20upx 0 20upx;
+		font-size: 32upx;
+		font-weight: bold;
 	}
 	.total-box{
-		background: #0952C3;
+		background: url(../../static/images/wallet/wallet-bg.png);
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
 		font-size: $font-base;
-		padding: 100upx 30upx 40upx 30upx;
-		color: $font-color-light;
+		padding: 60upx 30upx 40upx 30upx;
+		color: #8db3fe;
 		.title{
 			padding-bottom: 10upx;
 		}
@@ -106,7 +122,7 @@
 			flex-direction: row;
 			justify-content: space-between;
 			align-items: middle;
-			padding-top: 20upx;
+			padding-top: 40upx;
 			.btn{
 				text-align: center;
 				flex: 0 0 32%;
@@ -124,7 +140,7 @@
 			.s-row{
 				display:flex;
 				align-items:center;
-				padding: 10upx 30upx 0upx 30upx;
+				padding: 10upx 5upx 0upx 5upx;
 				.subtitle{
 					padding: 4upx 0 10upx 0;
 				}

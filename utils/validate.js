@@ -7,6 +7,14 @@ export function isEmail (s) {
 }
 
 /**
+ * 账号
+ * @param {Object} s
+ */
+export function isAccount (s) {
+  return /^[0-9A-Za-z]{6,18}$/.test(s)
+}
+
+/**
  * 手机号码
  * @param {*} s
  */

@@ -1,32 +1,35 @@
 <template>
 	<view class="container">
-		<view class="left-bottom-sign"></view>
 		<view class="back-btn yticon icon-zuojiantou-up" @click="navBack"></view>
-		<view class="right-top-sign"></view>
 		<!-- 设置白色背景防止软键盘把下部绝对定位元素顶上来盖住输入框等 -->
 		<view class="wrapper">
-			<view class="left-top-sign">LOGIN</view>
+			<!--
+			<view class="left-top-sign">LOGIN</view>-->
 			<view class="welcome">
-				欢迎登录！
+				<image mode="widthFix" src="../../static/images/public/logo.png" class="logo"></image>
+				<view class="txt">
+					<text class="b">{{i18n.login.welcome}} {{siteName}}</text>
+					<!--<text>Welcome to fexcoin</text>-->
+				</view>
 			</view>
 			<view class="input-content">
 				<view class="input-item">
-					<text class="tit">手机号码</text>
-					<input 
+					<image src="../../static/images/public/icon-mobile.png" class="icon"></image>
+					<input placeholder-style="color: #ffffff"
 						type="mobile" 
 						v-model="form.username" 
-						placeholder="请输入手机号码"
+						:placeholder="i18n.login.inputAccount"
 						maxlength="11"
 						data-key="username"
 						@input="inputChange"
 					/>
 				</view>
 				<view class="input-item">
-					<text class="tit">密码</text>
-					<input 
+					<image src="../../static/images/public/icon-pwd.png" class="icon"></image>
+					<input placeholder-style="color: #ffffff"
 						type="password" 
 						v-model="form.password" 
-						placeholder="8-18位不含特殊字符的数字、字母组合"
+						:placeholder="i18n.login.pwdRule"
 						placeholder-class="input-empty"
 						maxlength="20"
 						password 
@@ -36,15 +39,29 @@
 					/>
 				</view>
 			</view>
-			<button class="confirm-btn" @click="toLogin" :disabled="logining">登录</button>
-			<view class="forget-section">
-				忘记密码?
+			
+			<button class="confirm-btn" @click="useVerify" :disabled="logining">{{i18n.login.login}}</button>
+		</view>
+		
+		<view class="link">
+			<view class="register-section">
+				{{i18n.login.noAccount}}
+				<text @click="toRegist">{{i18n.login.registration}}</text>
+			</view>
+			<view class="forget-section" @click="navTo('/pages/public/forget')">
+				{{i18n.login.forget}}
 			</view>
 		</view>
-		<view class="register-section">
-			还没有账号?
-			<text @click="toRegist">马上注册</text>
-		</view>
+		
+		<Verify
+				:title="verifyTitle"
+				:explain="explain"
+				@success="success"
+				:mode="'pop'"
+				:captchaType="'blockPuzzle'"
+				:imgSize="{ width: '300px', height: '155px' }"
+				ref="verify"></Verify>
+		<uni-valid-popup ref="validPopup" @ok="ok" type="google"></uni-valid-popup>
 	</view>
 </template>
 
@@ -53,56 +70,118 @@
 		mapState,
 		mapActions
 	} from 'vuex'
-	import {isMobile, isPassword} from '../../utils/validate'
+	import {isAccount, isPassword} from '../../utils/validate'
+	import Verify from "../../components/verifition/verify/verify";
+	import uniValidPopup from '../../components/uni-valid-popup.vue';
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default{
+		components: {
+			Verify,
+			uniValidPopup
+		},
+		mixins: [commonMixin],
 		data(){
 			return {
 				form: {
-					username: '13585883424',
-					password: '111111'
+					username: '13999999999',
+					password: 'Aa123456',
+					captchaVerify: '',
+					googleCode: ''
 				},
-				logining: false
+				logining: false,
+				redirect: undefined,
+				verifyTitle: '',
+				explain: '',
+				verifySuccess: '',
+				verifyFail: ''
 			}
+		},
+		onShow() {
+			this.verifyTitle = this.i18n.common.verifyTitle;
+			this.explain = this.i18n.common.explain;
+			this.verifySuccess = this.i18n.common.verifySuccess;
+			this.verifyFail = this.i18n.common.verifyFail;
+		},
+		onLoad(options) {
+			this.redirect = options.redirect
 		},
 		methods: {
 			...mapActions('user', ['login']),
+			success(params){
+				this.form.captchaVerify = params.captchaVerification
+				console.log("success: ", params)
+				this.$refs.verify.hiddle()
+				this.toLogin()
+			},
+			useVerify(){
+				if(!this.form.username){
+					this.$api.msg(this.i18n.login.inputAccount)
+					return;
+				}
+				// if (!isAccount(this.form.username)) {
+				// 	this.$api.msg(this.i18n.login.accountError)
+				// 	this.logining = false
+				// 	return;
+				// }
+				if(this.form.password == ''){
+					this.$api.msg(this.i18n.login.password)
+					return;
+				}
+				//this.$refs.verify.show()
+				this.toLogin()
+			},
 			inputChange(e){
 				const key = e.currentTarget.dataset.key;
 				this[key] = e.detail.value;
 			},
 			navBack(){
-				uni.navigateBack();
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
 			},
 			toRegist(){
 				uni.navigateTo({
 					url: '/pages/public/register'
 				})
 			},
+			ok(data){
+				if(!data.code){
+					this.$api.msg(this.i18n.toast.inputGoogleCode)
+					return;
+				}
+				this.form.googleCode = data.code
+				this.toLogin()
+			},
 			toLogin(){
-				this.logining = true;
-				if(this.form.username == ''){
-					this.$api.msg('请输入手机号')
-					this.logining = false
-					return;
-				}
-				if (!isMobile(this.form.username)) {
-					this.$api.msg('手机号不正确')
-					this.logining = false
-					return;
-				}
-				if(this.form.password == ''){
-					this.$api.msg('请输入密码')
-					this.logining = false
-					return;
-				}
+				let $this = this
 				this.login(this.form).then(res => {
-					this.$api.msg('登录成功', 1000, false, 'none', function() {
+					
+					this.$api.msg(this.i18n.login.loginSuccess, 1000, false, 'none', function() {
+						$this.$refs.verify.hiddle()
 						setTimeout(function() {
-							this.logining = false
-							uni.navigateBack({})
+							$this.logining = false
+							if($this.redirect && $this.redirect == 'register'){
+								uni.switchTab({
+									url: '/pages/index/index'
+								})
+							} else {
+								let pages = getCurrentPages();
+								if(pages && pages.length == 1){
+									uni.switchTab({
+										url: '/pages/index/index'
+									})
+								} else {
+									uni.navigateBack({})
+								}
+							}
 						}, 1000)
 					})
 				}).catch(error => {
+					console.log(error)
+					if(error.code == -100){
+						this.$refs.validPopup.open('google')
+					}
+					this.$refs.validPopup.enable()
 					this.logining = false
 				})
 			}
@@ -114,19 +193,21 @@
 <style lang='scss'>
 	page{
 		background: #fff;
+		width: 100%;
+		height: 100%;
 	}
 	.container{
-		padding-top: 115px;
+		padding-top: 100px;
 		position:relative;
-		width: 100vw;
-		height: 100vh;
 		overflow: hidden;
-		background: #fff;
+		background: url(../../static/images/public/bg.png);
+		background-size: 100% 100%;
+		width: 100%;
+		height: 100%;
 	}
 	.wrapper{
 		position:relative;
 		z-index: 90;
-		background: #fff;
 		padding-bottom: 40upx;
 	}
 	.back-btn{
@@ -136,7 +217,7 @@
 		padding-top: var(--status-bar-height);
 		top: 40upx;
 		font-size: 40upx;
-		color: $font-color-dark;
+		color: #ffffff;
 	}
 	.left-top-sign{
 		font-size: 120upx;
@@ -179,27 +260,43 @@
 	}
 	.welcome{
 		position:relative;
-		left: 50upx;
-		top: -90upx;
-		font-size: 46upx;
-		color: #555;
-		text-shadow: 1px 0px 1px rgba(0,0,0,.3);
+		padding-left: 40upx;
+		padding-bottom: 50upx;
+		.logo{
+			width: 150upx;
+		}
+		.txt{
+			display: flex;
+			flex-direction: column;
+			color: #ffffff;
+			padding-left: 20upx;
+			padding-bottom: 40upx;
+			font-size: 26upx;
+			.b{
+				font-size: 40upx;
+				font-weight: bold;
+			}
+		}
 	}
 	.input-content{
 		padding: 0 60upx;
 	}
 	.input-item{
 		display:flex;
-		flex-direction: column;
-		align-items:flex-start;
+		flex-direction: row;
+		align-items: center;
 		justify-content: center;
-		padding: 0 30upx;
-		background:$page-color-light;
-		height: 120upx;
-		border-radius: 4px;
+		padding: 0 10upx;
+		height: 80upx;
+		line-height: 80upx;
 		margin-bottom: 50upx;
+		border-bottom: 1px solid rgba(255,255,255,0.6);
 		&:last-child{
 			margin-bottom: 0;
+		}
+		.icon{
+			width: 13px;
+			height: 17px;
 		}
 		.tit{
 			height: 50upx;
@@ -210,40 +307,42 @@
 		input{
 			height: 60upx;
 			font-size: $font-base + 2upx;
-			color: $font-color-dark;
+			color: #ffffff;
 			width: 100%;
+			padding-left: 20upx;
 		}	
 	}
-
+	
 	.confirm-btn{
 		width: 630upx;
 		height: 76upx;
 		line-height: 76upx;
 		border-radius: 50px;
-		margin-top: 70upx;
-		background: $uni-color-primary;
-		color: #fff;
+		margin-top: 40upx;
+		background: #FFFFFF;
+		color: #4E46D2;
 		font-size: $font-lg;
 		&:after{
 			border-radius: 100px;
 		}
 	}
+	.link{
+		display: flex;
+		justify-content: space-between;
+		padding: 30upx 60upx;
+		color: #ffffff;
+	}
 	.forget-section{
-		font-size: $font-sm+2upx;
-		color: $font-color-spec;
+		font-size: $font-md;
 		text-align: center;
-		margin-top: 40upx;
+		color: #4E46D2;
 	}
 	.register-section{
-		position:absolute;
-		left: 0;
-		bottom: 50upx;
-		width: 100%;
-		font-size: $font-sm+2upx;
-		color: $font-color-base;
+		font-size: $font-md;
+		color: #4E46D2;
 		text-align: center;
 		text{
-			color: $font-color-spec;
+			color: #ffffff;
 			margin-left: 10upx;
 		}
 	}

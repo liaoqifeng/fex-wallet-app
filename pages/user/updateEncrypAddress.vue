@@ -1,16 +1,16 @@
 <template>
 	<view class="container">
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input v-model="form.coin" class="cell-input" placeholder="请选择币种" disabled="true" readonly="true"/>
-			<text class="cell-more" @click="navTo('/pages/public/coinList')">请选择</text>
+			<input v-model="form.coin" class="cell-input" :placeholder="i18n.my.address.selectCoin" disabled="true" readonly="true"/>
+			<text class="cell-more" @click="navTo('/pages/public/coinList')">{{i18n.common.select}}</text>
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input v-model="form.address" class="cell-input" placeholder="请输入地址"/>
+			<input v-model="form.address" class="cell-input" style="width: 99%;" :placeholder="i18n.my.address.inputAddr"/>
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input v-model="form.remark" class="cell-input" placeholder="请输入地址名称"/>
+			<input v-model="form.remark" class="cell-input" style="width: 99%;" :placeholder="i18n.my.address.inputName"/>
 		</view>
-		<button class="submit" @click="handleSubmit">确认</button>
+		<button class="submit" @click="handleSubmit">{{i18n.common.ok}}</button>
 	</view>
 </template>
 
@@ -19,8 +19,10 @@
 		mapState,
 		mapActions
 	} from 'vuex'
+	import {authMixin, commonMixin} from '@/common/mixin/mixin.js'
 	export default {
 		components: {},
+		mixins: [commonMixin],
 		data() {
 			return {
 				form: {
@@ -30,14 +32,20 @@
 				}
 			};
 		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.my.address.addAddress
+			})
+		},
+		onLoad(){
+			uni.$on('selectCoin', this.selectCoin)
+		},
+		onUnload(){
+			uni.$off('selectCoin', this.selectCoin)
+		},
 		methods:{
 			...mapActions('user', ['addEncryptBook']),
-			onLoad(){
-				uni.$on('selectCoin', this.selectCoin)
-			},
-			onUnload(){
-				uni.$off('selectCoin', this.selectCoin)
-			},
+			
 			selectCoin(data){
 				this.form.coin = data.coin.item.name
 			},
@@ -48,22 +56,22 @@
 			},
 			handleSubmit(){
 				if(!this.form.coin){
-					this.$api.msg('请选择币种')
+					this.$api.msg(this.i18n.my.address.selectCoin)
 					return;
 				}
 				if(!this.form.address){
-					this.$api.msg('请输入地址')
+					this.$api.msg(this.i18n.my.address.inputAddr)
 					return;
 				}
 				if(!this.form.remark){
-					this.$api.msg('请输入地址名称')
+					this.$api.msg(this.i18n.my.address.inputName)
 					return;
 				}
 				let data = this.form
-				uni.showLoading({ title: '添加中' });
+				uni.showLoading({ title: this.i18n.common.request });
 				this.addEncryptBook(data).then(res =>{
 					uni.hideLoading()
-					this.$api.msg('添加成功', 1000, false, 'none', function() {
+					this.$api.msg(this.i18n.toast.addSuccess, 1000, false, 'none', function() {
 						setTimeout(function() {
 							uni.navigateBack({})
 						}, 1000)

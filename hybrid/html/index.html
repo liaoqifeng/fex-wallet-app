@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<!-- Fix for iOS Safari zooming bug -->
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta charset="utf-8" />
+		
+		<script src="./pako.js"></script>
+		<!--封装了一个发布订阅模式-->
+		<script src="./event.js"></script>
+		<!--图表库js-->
+		<script src="./charting_library/charting_library.min.js"></script>
+		<!--websocket-->
+		<script src="./websocket.js"></script>
+		<!--图表数据获取-->
+		<script src="./datafeed.js"></script>
+		<!--图表配置-->
+		<script src="./chartConfig.js"></script>
+	</head>
+	<style>
+		* {
+  	padding: 0;
+  	margin: 0;
+  }
+  
+  body {
+  	background-color: #181B2A;
+  }
+
+  /* 这个下面的css是 产品周期按钮的 */
+
+		.header {
+			position: relative;
+			height: 20vh;
+			box-shadow: 0px 4px 2px #05111d;
+		}
+		
+		.times {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.times span {
+			width: 16.66%;
+			height: 30px;
+			line-height: 30px;
+			color: #7c8bac;
+			font-size: 16px;
+			text-align: center;
+		}
+
+		.times span.active {
+			position: relative;
+			color: #157fd5;
+			font-weight: 500;
+		}
+
+		.times span.active:before {
+			content: " ";
+			position: absolute;
+			bottom: -2px;
+			left: 10%;
+			z-index: 1;
+			width: 80%;
+			height: 3px;
+			background-color: #157fd5;
+			border-radius: 3px;
+		}
+	
+/* 	#tv_chart_container:before {
+		content: " ";
+		position: fixed;
+		bottom: 22%;
+		left: 5%;
+		z-index: 999;
+		width: 9vw;
+		height: 9vw;
+		background-color: #fff;
+	} */
+  /* 这个下面的css重点关注，和k线图与关 */
+  #tv_chart_container {
+    width: 100%;
+    height: 80vh;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100% !important;
+		
+  }
+	.pane-legend-line.pane-legend-wrap.main.expand-line {
+	    padding-right: 5px;
+	}
+	.detail{
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 10px 10px 0px 10px;
+	}
+	.detail .left{
+	}
+	.detail .u{
+		font-size: 28px;
+		color: #ffffff;
+		font-weight: bold;
+	}
+	.detail .c{
+		font-size: 13px;
+		color: #7c8bac;
+		margin-top: 10px;
+	}
+	.detail .c .change{
+		color: #ffffff;
+		margin-left: 10px;
+	}
+	.detail .right{
+		min-width: 30%;
+	}
+	.detail .right .i{
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		color: #ffffff;
+		padding: 4px 0;
+		font-size: 13px;
+	}
+	.detail .right .t{
+		color: #7c8bac;
+	}
+</style>
+	<body>
+		<div class="root">
+			<div class="header">
+				<div class="detail">
+					<div class="left">
+						<div class="u" id="close">0.00</div>
+						<div class="c">≈<span id="cny">0.00 </span>CNY<span id="change" class="change">+0.0%</span></div>
+					</div>
+					<div class="right">
+						<div class="i"><label class="t">高</label><span id="high">0.00</span></div>
+						<div class="i"><label class="t">低</label><label id="low">0.00</label></div>
+						<div class="i"><label class="t">24H</label><label id="amount">0.00</label></div>
+					</div>
+				</div>
+				<div class="times" id="interval">
+					<span data-value="1">分时</span>
+					<span data-value="5">5分钟</span>
+					<!-- <span data-value="15">15分钟</span> -->
+					<span data-value="30">30分钟</span>
+					<span data-value="60">1小时</span>
+					<span data-value="240">4小时</span>
+					<span class="active" data-value="1D">日线</span>
+				</div>
+			</div>
+			<div class="chart">
+				<div id="tv_chart_container"></div>
+			</div>
+		</div>
+		<script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
+		<script type="text/javascript">
+			function plusReady() {
+				var ws = plus.webview.currentWebview();
+				ws.overrideUrlLoading({
+					mode: 'reject'
+				}, function(e) {
+					console.log('拦截跳转 url: ' + e.url);
+				})
+			}
+			document.addEventListener('plusready', plusReady, false);
+			
+			if (window.UniAppJSBridge) {
+			} else {
+				document.addEventListener('UniAppJSBridgeReady', function () {
+					
+				});
+			}
+		</script>
+		<!--页面总统js 初始化图表库 绑定点击事件等-->
+		<script src="./index.js"></script>
+		
+	</body>
+</html>

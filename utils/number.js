@@ -4,7 +4,7 @@ export function formatUnit(value, symbol) { //两个参数，一个是值，一�
 		int: undefined, //整数位
 		dec: undefined, //小数位
 		targ: "", //正负
-		times: ['', '万', '亿', '万亿', '亿亿']
+		times: ['', 'M', 'B', 'MB', 'BB']
 	}
 	if(value == 0){
 		return parseFloat(value).toFixed(2);

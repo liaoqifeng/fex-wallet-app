@@ -3,13 +3,23 @@
 #### 特别声明
 本软件属于技术开源软件, 任何使用本源码从事商业活动，对别人和自己造成损失的，本人概不负责！
 
-### Android测试包下载: [下载](http://47.107.100.112/apk/fexcoin.apk)
+#### 开源不易,请作者喝杯奶茶! ≧◠◡◠≦
+##### TRX: TVhL64bjXRAkrM1qbcZhi8EGCa2pZq8wgM
+##### ETH: 0x4fA38fD5BA5c1054E48E036EBd5ac5b34D76Cec7
+##### EOS: fexcoin54321
 
+### Android测试包下载: [点击下载](https://fexcoin.oss-cn-shenzhen.aliyuncs.com/upload/apk/fexcoin.apk)
+
+### 扫一扫下载
+![Image text](https://shkj1994.oss-cn-shenzhen.aliyuncs.com/images/qrcode.png) 
+
+### H5体验
+![Image text](https://globalcoin.oss-cn-hongkong.aliyuncs.com/upload/images/qrcode.png) 
 
 #### 技术交流社区
 
-##### 微信二维码:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ二维码:
-![Image text](https://github.com/liaoqifeng/fex-wallet-app/raw/master/doc/wechat_qrcode.jpg) 
+##### 微信群 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ群
+![Image text](doc/wechat_qrcode.jpg) 
 ![Image text](doc/qq_qrcode.jpg) 
 
 
@@ -19,7 +29,39 @@
 3. 法币交易
 4. 行情资讯
 5. 存币理财
-6. 数字商城
+6. 行情预言机
+7. 云算力
+
+#### 版本更新
+
+##### 2021-11-19: 新增多语言需求
+
+##### 2021-10-09: 新增登录滑块验证功能
+
+##### 2021-09-07: 新增身份认证
+
+##### 2021-06-25: 新增币种信息展示
+![Image text](doc/19.jpeg) 
+
+##### 2021-06-16: 新增云算力需求
+![Image text](doc/18.jpg) 
+
+##### 2021-06-03: 新增行情预言机需求
+![Image text](doc/17.jpeg) 
+
+##### 2021-05-13: 新增APP版本更新
+
+##### 2021-03-03: 新增抽奖需求
+![Image text](doc/16.jpeg) 
+
+##### 2021-01-24: 新增签到需求
+![Image text](doc/15.jpeg) 
+
+##### 2020-10-24: 新增存币理财需求
+![Image text](doc/13.jpg) 
+
+##### 2020-06-14: 接入火币K线行情
+![Image text](doc/12.jpg) 
 
 ![Image text](doc/fexcoin.jpg) 
 
@@ -35,11 +77,16 @@
 
 1. 将项目拖入[HbuilderX](http://www.dcloud.io/hbuilderx.html) 
 2. 运行命令 
-
-   npm install @dcloudio/uni-ui
-
-   npm install vue-moment
+   npm install
+   
 3. [uni-app教程](https://uniapp.dcloud.io) 
+
+
+#### 推荐作者小程序
+![Image text](doc/appbox.jpg) 
+![Image text](https://shkj1994.oss-cn-shenzhen.aliyuncs.com/gh_1c63fd731ccc_430.jpg) 
+![Image text](https://shkj1994.oss-cn-shenzhen.aliyuncs.com/gh_a79c05053be4_430.jpg) 
+![Image text](https://shkj1994.oss-cn-shenzhen.aliyuncs.com/gh_4264e951ad60_430.jpg) 
 
 #### 参与贡献
 

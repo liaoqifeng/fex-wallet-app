@@ -7,50 +7,51 @@
 					<text class="name">{{exItem.base}}</text>
 					<image src="../../static/tri.png" class="tri"></image>
 				</view>
-				<view class="quote item">
+				<view class="quote item" @click="changeCoin()">
 					<image :src="exItem.quoteCoinIcon" class="coinLogo"></image>
 					<text class="name">{{exItem.quote}}</text>
 					<image src="../../static/tri.png" class="tri"></image>
 				</view>
-				<view class="transform"><image src="../../static/exc.png" class="exc"></image></view>
+				<view @click="transform" class="transform"><image src="../../static/exc.png" class="exc"></image></view>
 			</view>
 			<view class="amount little-line">
-				<input type="number" v-model="form.amount" placeholder="转出数量" class="out"/>
-				<input type="number" v-model="inAmount" placeholder="收到数量" class="in"/>
+				<input type="number" v-model="form.amount" :placeholder="i18n.convert.outAmount" class="out"/>
+				<input type="number" v-model="inAmount" :placeholder="i18n.convert.inAmount" class="in"/>
 			</view>
 			<view class="params">
-				<view class="rate">余额: {{account.normalBalance}} {{exItem.base}}</view>
-				<view class="fee">手续费:{{exItem.fee * 100}}%</view>
+				<view class="rate">{{i18n.convert.balance}}: {{account.normalBalance | fixed(2)}} {{exItem.base}}</view>
+				<view class="fee">{{i18n.convert.fee}}:{{exItem.fee * 100}}%</view>
 			</view>
-			<view class="rate-amount">汇率: 1{{exItem.base}} = {{1 * exItem.scale}}{{exItem.quote}}</view>
+			<view class="rate-amount">{{i18n.convert.ratio}}: 1{{exItem.base}} = {{1 * exItem.scale}}{{exItem.quote}}</view>
 		</view>
-		<button type="primary" @click="submit" class="btn">闪电兑换</button>
+		<button type="primary" @click="submit" class="btn">{{i18n.convert.exchangeBtn}}</button>
 		
 		
 		<view class="record">
 			<!-- <view class="tip">兑换记录</view> -->
 			<view class="title">
-				<view class="col">兑出资产/兑入资产</view>
-				<view class="col r">手续费/时间</view>
+				<view class="col">{{i18n.convert.outAsset}}/{{i18n.convert.inAsset}}</view>
+				<view class="col r">{{i18n.convert.fee}}/{{i18n.convert.time}}</view>
 			</view>
 			<scroll-view class="uni-list" :enableBackToTop="enableBackToTop" :scroll-y="scrollY" @scrolltolower="loadMore">
-				<empty v-if="empty"></empty>
+				<u-empty :text="i18n.common.noData" mode="data" :show="empty" img-width="140"></u-empty>
 				<view class="uni-row little-line" v-for="(item, i) in records" :key="item.id">
 					<view class="col">
 						{{item.baseAmount}} {{item.base}} / {{item.quoteAmount}} {{item.quote}}
 					 </view>
 					<view class="col r">{{item.fee}} {{item.quote}} / {{item.ctime | moment('HH:mm MM/DD')}}</view>
 				</view>
-				<uni-load-more :status="loadingStatus"></uni-load-more>
+				<uni-load-more v-show="query.page > 1" :contentText="contentText" v-if="!empty" :status="loadingStatus"></uni-load-more>
 			</scroll-view>
 		</view>
-		<uni-popup ref="popup" type="bottom">
+		<u-popup ref="popup" v-model="showPopup" mode="bottom">
 			<view class="coin-box">
 				<view class="coin-search">
-					<uni-search-bar placeholder="搜索token" @confirm="search"></uni-search-bar>
+					<uni-search-bar :placeholder="`${i18n.convert.search}token`" @input="search"></uni-search-bar>
 				</view>
 				<view class="item-wrapper">
-					<view class="coin-item little-line" v-for="(item, i) in coinList" :key="item.id">
+					<u-empty :text="i18n.common.noData" mode="data" :show="coinEmpty" img-width="140"></u-empty>
+					<view class="coin-item little-line" @click="select(item)" v-for="(item, i) in coinList" :key="item.id">
 						<view class="col">
 							<image :src="item.baseCoinIcon"/>
 							<text>{{item.base}}</text>
@@ -62,7 +63,7 @@
 					</view>
 				</view>
 			</view>
-		</uni-popup>
+		</u-popup>
 		
 		<uni-valid-popup ref="validPopup" @ok="ok"></uni-valid-popup>
 	</view>
@@ -80,19 +81,21 @@
 	import empty from '../../components/empty.vue'
 	import uniValidPopup from '@/components/uni-valid-popup.vue';
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
-	import {authMixin} from '@/common/mixin/mixin.js'
+	import {authMixin, commonMixin} from '@/common/mixin/mixin.js'
 	export default {
 		components: {uniIcons, uniPopup, uniSearchBar, empty, uniList, uniCell, uniRefresh, uniLoadMore, uniValidPopup},
-		mixins: [authMixin],
+		mixins: [authMixin, commonMixin],
 		data() {
 			return {
 				bottom: 0,
 				total: 0, //总价格
 				allChecked: false, //全选状态  true|false
 				empty: false, //空白页现实  true|false
+				coinEmpty: false,
 				scrollY: true,
 				enableBackToTop: true,
 				indicatorStyle: 'height:90upx; line-height:90upx;',
+				coinCacheList: [],
 				coinList: [],
 				exItem: {},
 				account: {},
@@ -111,7 +114,8 @@
 				totalCount: 0,
 				records: [],
 				loadingStatus: 'more',
-				isLastPage: false
+				isLastPage: false,
+				showPopup: false
 			};
 		},
 		watch: {
@@ -124,6 +128,11 @@
 		    }
 		},
 		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.convert.title
+			})
+			this.query.page = 1;
+			this.records = [];
 			this.loadData();
 		},
 		onLoad(){
@@ -134,10 +143,10 @@
 			submit(){
 				if(!this.loginInfo.isCapitalPasswd){
 					uni.showModal({
-					    title: '提示',
-					    content: '请设置资金密码',
-						confirmText: '设置',
-						cancelText: '取消',
+					    title: this.i18n.common.tip,
+					    content: this.i18n.popup.setpaypwdtext,
+						confirmText: this.i18n.common.set,
+						cancelText: this.i18n.common.cancel,
 					    success: function (res) {
 					        if (res.confirm) {
 					            uni.navigateTo({
@@ -149,7 +158,7 @@
 					return
 				}
 				if(!this.form.amount){
-					this.$api.msg('请输入兑换数量')
+					this.$api.msg(this.i18n.convert.inputVol)
 					return;
 				}
 				this.$refs.validPopup.open('capitalPasswd')
@@ -157,7 +166,7 @@
 			},
 			ok(data){
 				if(!data.code){
-					this.$api.msg('请输入资金密码')
+					this.$api.msg(this.i18n.toast.inputCapthError)
 					return;
 				}
 				this.form.id = this.exItem.id
@@ -165,16 +174,21 @@
 				this.form.to = this.exItem.quote
 				this.form.capitalPasswd = data.code
 				this.addExchange(this.form).then(res =>{
-					this.loadMore()
-					this.$refs.popup.close()
+					this.records = [];
+					this.query.page = 1
+					this.getExchangeRecordList()
+					//this.$refs.popup.close()
+					this.showPopup = false
 					this.$refs.validPopup.close()
-					this.$api.msg('兑换成功')
+					this.resetAmount()
+					this.$api.msg(this.i18n.convert.exchangeSuccess)
 				}).catch(error => {
 					this.$refs.validPopup.enable()
 				})
 			},
 			changeCoin(){
-				this.$refs.popup.open()
+				//this.$refs.popup.open()
+				this.showPopup = true
 			},
 			getExchangeRecordList(){
 				this.exchangeRecordList(this.query).then(res =>{
@@ -192,6 +206,31 @@
 					}
 				})
 			},
+			transform(){
+				let list = this.coinList
+				let item = null
+				for(let i = 0; i < list.length; i++){
+					if(list[i].base == this.exItem.quote && list[i].quote == this.exItem.base){
+						item = list[i]
+						break
+					}
+				}
+				if(item == null){
+					this.$api.msg(this.i18n.convert.notTrasfer)
+					return
+				}
+				this.exItem = item
+				this.loadAccount(this.exItem.base)
+				this.resetAmount()
+			},
+			select(symbol){
+				this.exItem = symbol
+				this.loadAccount(this.exItem.base)
+				this.getExchangeRecordList()
+				this.resetAmount()
+				//this.$refs.popup.close()
+				this.showPopup = false
+			},
 			loadMore(){
 				if(!this.isLastPage){
 					this.loadingStatus = 'loading'
@@ -203,6 +242,7 @@
 			async loadData(){
 				this.exchangeList().then(res =>{
 					this.coinList = res.data
+					this.coinCacheList = res.data
 					this.exItem = this.coinList[0]
 					this.loadAccount(this.exItem.base)
 				})
@@ -213,10 +253,32 @@
 					this.account = res.data
 				})
 			},
-			navToDetail(){
-				uni.navigateTo({
-					url: '/pages/wallet/detail'
-				})
+			resetAmount(){
+				this.form.amount = undefined
+				this.inAmount = undefined
+			},
+			search(data){
+				if(data.value){
+					let newList = []
+					let list = this.coinCacheList
+					let v = data.value.toLowerCase()
+					for(let i = 0; i < list.length; i++){
+						let base = list[i].base.toLowerCase()
+						let quote = list[i].quote.toLowerCase()
+						if(base.indexOf(v) >= 0 || quote.indexOf(v) >= 0){
+							newList.push(list[i])
+						}
+					}
+					if(newList == undefined || newList.length <= 0){
+						this.coinEmpty = true
+					} else {
+						this.coinEmpty = false
+					}
+					this.coinList = newList
+				} else {
+					this.coinEmpty = false
+					this.coinList = this.coinCacheList
+				}
 			}
 		}
 	}

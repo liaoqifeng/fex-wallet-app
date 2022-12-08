@@ -12,7 +12,7 @@
 				</text>
 				<view class="content">{{item.content}}</view>
 			</view>
-			<uni-load-more :status="loadingStatus"></uni-load-more>
+			<u-loadmore v-show="total > 10" :load-text="loadText" :status="loadingStatus" bg-color="#f8f8f8"/>
 		</view>
 	</view>
 </template>
@@ -25,10 +25,12 @@
 	import {uniIcons} from '@dcloudio/uni-ui'
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 	import empty from '../../components/empty.vue'
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default {
 		components: {
 			uniIcons, uniLoadMore, empty
 		},
+		mixins: [commonMixin],
 		data() {
 			return {
 				total: 0, //总价格
@@ -40,13 +42,16 @@
 					classfiy: 0
 				},
 				totalCount: 0,
-				loadingStatus: 'more',
+				loadingStatus: 'loadmore',
 				isLastPage: false
 			};
 		},
 		onLoad(){
 			//this.loadData();
 			uni.startPullDownRefresh();
+			uni.setNavigationBarTitle({
+				title: this.i18n.tabBar.news
+			})
 		},
 		onReachBottom(){
 			if(!this.isLastPage){
@@ -55,6 +60,8 @@
 			}
 		},
 		onPullDownRefresh() {
+			this.list = []
+			this.query.page = 1
 			this.loadData();
 		},
 		methods: {
@@ -71,9 +78,9 @@
 					this.empty = res.total <= 0
 					this.isLastPage = (this.query.page == res.pages)
 					if(this.isLastPage){
-						this.loadingStatus = 'noMore'
+						this.loadingStatus = 'nomore'
 					} else {
-						this.loadingStatus = 'more'
+						this.loadingStatus = 'loadmore'
 					}
 					if(this.empty){
 						this.list = [];
@@ -81,7 +88,7 @@
 						this.list = this.list.concat(res.rows)
 					}
 				}).catch(error => {
-					this.loadingStatus = 'more'
+					this.loadingStatus = 'loadmore'
 					uni.stopPullDownRefresh();
 				})
 			},
@@ -97,6 +104,7 @@
 <style lang='scss'>
 	.container{
 		padding: 0upx 0upx;
+		height: 100%;
 	}
 	.news-section{
 		.block{
@@ -110,9 +118,9 @@
 				width: 20upx;
 				height: 20upx;
 				border-radius: 100px;
-				background-color: $uni-text-color-grey;
+				background-color: #1866fe;
 				top: 12upx;
-				left: -12upx;
+				left: -11upx;
 			}
 			.time{
 				font-size: $font-base;

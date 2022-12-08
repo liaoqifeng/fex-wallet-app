@@ -10,6 +10,7 @@
 				}]"
 				:class="icon"
 			></text>
+			<image v-if="image" :src="image" class="cell-image"></image>
 			<text class="cell-tit clamp">{{title}}</text>
 			<text v-if="tips" class="cell-tip">{{tips}}</text>
 			<text class="cell-more yticon"
@@ -38,6 +39,10 @@
 		},
 		props: {
 			icon: {
+				type: String,
+				default: ''
+			},
+			image: {
 				type: String,
 				default: ''
 			},
@@ -81,7 +86,7 @@
 	}
 	.mix-list-cell{
 		display:flex;
-		align-items:baseline;
+		align-items:center;
 		padding: 20upx $page-row-spacing;
 		line-height:60upx;
 		position:relative;
@@ -114,6 +119,11 @@
 		.cell-tip{
 			font-size: $font-sm+2upx;
 			color: $font-color-light;
+		}
+		.cell-image{
+			width: 50upx;
+			height: 50upx;
+			margin-right: 20upx;
 		}
 	}
 </style>

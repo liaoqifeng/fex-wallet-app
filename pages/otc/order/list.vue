@@ -2,77 +2,51 @@
 	<view class="container">
 		<!-- 列表 -->
 		<view class="coin-section m-t">
-			<view class="block little-line" @click="navTo('/pages/otc/order/detail')">
+			<u-empty :text="i18n.common.noData" :show="empty" mode="data" margin-top="200"></u-empty>
+			<view v-for="(item, i) in list" :key="`row${item.id}`" class="block little-line" @click="navTo(`/pages/otc/order/detail?id=${item.id}`, true)">
 				<view class="s-row">
 					<view class="col">
-						<text class="buy coin">购买</text>
-						<text class="coin">BTC</text>
+						<text class="coin" :class="item.side | formatSideClass(item)">{{item.side | formatSide(item, i18n.otc.buy, i18n.otc.sell)}}</text>
+						<text class="coin">{{item.coin}}</text>
 					</view>
 					<view class="col r light">
-						<text class="status">已完成</text>
+						<text class="status">{{statusMap[item.status]}}</text>
 						<uni-icons type="forward" size="20" class="gt"></uni-icons>
 					</view>
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-title">时间</view>
-					<view class="col subtitle row-title">数量(USDT)</view>
-					<view class="col r subtitle row-title">交易总合(CNY)</view>
+					<view class="col subtitle row-title">{{i18n.common.time}}</view>
+					<view class="col subtitle row-title">{{i18n.common.vol}}(USDT)</view>
+					<view class="col r subtitle row-title">{{i18n.common.amount}}(CNY)</view>
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-amount">08:27 03/20</view>
-					<view class="col subtitle row-amount">0.025334</view>
-					<view class="col r subtitle row-amount">100.00</view>
+					<view class="col subtitle row-amount">{{item.ctime | moment('HH:mm MM/DD')}}</view>
+					<view class="col subtitle row-amount">{{item.volume}}</view>
+					<view class="col r subtitle row-amount">{{item.totalPrice}}</view>
 				</view>
 			</view>
-			
-			<view class="block little-line" @click="navTo('/pages/wallet/detail')">
-				<view class="s-row">
-					<view class="col">
-						<text class="sell coin">出售</text>
-						<text class="coin">BTC</text>
-					</view>
-					<view class="col r light">
-						<text class="status">已完成</text>
-						<uni-icons type="forward" size="20" class="gt"></uni-icons>
-					</view>
-				</view>
-				<view class="s-row">
-					<view class="col subtitle row-title">时间</view>
-					<view class="col subtitle row-title">数量(USDT)</view>
-					<view class="col r subtitle row-title">交易总合(CNY)</view>
-				</view>
-				<view class="s-row">
-					<view class="col subtitle row-amount">08:27 03/20</view>
-					<view class="col subtitle row-amount">0.025334</view>
-					<view class="col r subtitle row-amount">100.00</view>
-				</view>
-			</view>
+			<u-loadmore v-if="!empty" :load-text="loadText" :status="loadingStatus" :margin-top="30"/>
 			
 		</view>
 		
 		<uni-popup ref="popup" type="top">
 			<view class="filter-wrapper">
 				<view class="filter">
-					<view class="filter-title">交易类型</view>
+					<view class="filter-title">{{i18n.otc.order.typeLabel}}</view>
 					<view class="filter-pay">
-						<text class="filter-pay-item filter-active">购买</text>
-						<text class="filter-pay-item">出售</text>
+						<text @click="filter('BUY', undefined)" class="filter-pay-item" :class="{'filter-active': query.side == 'BUY'}">{{i18n.otc.buy}}</text>
+						<text @click="filter('SELL', undefined)" class="filter-pay-item" :class="{'filter-active': query.side == 'SELL'}">{{i18n.otc.sell}}</text>
 						<text class="placeholder"></text>
 					</view>
-					<view class="filter-title">订单状态</view>
+					<view class="filter-title">{{i18n.otc.order.statusLabel}}</view>
 					<view class="filter-pay">
-						<text class="filter-pay-item filter-active">未付款</text>
-						<text class="filter-pay-item">已付款</text>
-						<text class="filter-pay-item">已完成</text>
-						<text class="filter-pay-item">已取消</text>
-						<text class="filter-pay-item">申诉中</text>
-						<text class="filter-pay-item">申诉完成</text>
+						<text class="filter-pay-item" v-for="(v, k) in statusMap" :key="k" @click="filter(undefined, k)" :class="{'filter-active': query.status == k}" >{{v}}</text>
 					</view>
 				</view>
 				
 				<view class="btn-wrapper">
-					<view class="btn">重置</view>
-					<view class="btn submit">筛选</view>
+					<view class="btn" @click="reset">{{i18n.common.reset}}</view>
+					<view class="btn submit" @click="search">{{i18n.common.filter}}</view>
 				</view>
 			</view>
 		</uni-popup>
@@ -80,41 +54,126 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from 'vuex';
+	import { mapState, mapActions } from 'vuex'
 	import {uniPopup, uniIcons} from '@dcloudio/uni-ui'
+	import {commonMixin, authMixin} from '@/common/mixin/mixin.js'
 	export default {
 		components: {uniPopup, uniIcons},
+		mixins: [commonMixin, authMixin],
 		data() {
 			return {
-				total: 0, //总价格
-				allChecked: false, //全选状态  true|false
-				empty: false, //空白页现实  true|false
-				cartList: [],
+				query: {
+					page: 1,
+					limit: 10,
+					side: undefined,
+					status: undefined
+				},
+				empty: false,
+				list: [],
+				isLastPage: false,
+				loadingStatus: 'loadmore',
+				statusMap: {
+					0: '待支付',
+					1: '已支付',
+					2: '交易成功',
+					3: '取消',
+					4: '申诉',
+					5: '申诉完成',
+					6: '异常订单'
+				}
 			};
 		},
-		onLoad(){
+		onShow(){
+			uni.setNavigationBarTitle({
+				title: this.i18n.otc.order.orderRecord
+			})
+			this.statusMap = {
+				0: this.i18n.otc.order.status.pedding,
+				1: this.i18n.otc.order.status.payed,
+				2: this.i18n.otc.order.status.success,
+				3: this.i18n.otc.order.status.cancel,
+				4: this.i18n.otc.order.status.appeal,
+				5: this.i18n.otc.order.status.appealDone,
+				6: this.i18n.otc.order.status.except
+			}
+			this.list = []
+			this.query.page = 1
+			this.loadingStatus = 'loadmore'
 			this.loadData();
+		},
+		onLoad() {
+			this.$fire.$emit('refreshCoin')
+		},
+		onReachBottom(){
+			if(!this.isLastPage){
+				this.query.page += 1
+				this.loadData()
+			}
+		},
+		onPullDownRefresh() {
+			this.list = []
+			this.query.page = 1
+			this.loadingStatus = 'loadmore'
+			this.loadData();
+		},
+		filters: {
+			formatSideClass(v, item){
+				if(item.creator == item.buyerId){
+					return 'buy'
+				} else {
+					return 'sell'
+				}
+			},
+			formatSide(v, item, buy, sell){
+				if(item.creator == item.buyerId){
+					return buy
+				} else {
+					return sell
+				}
+			}
 		},
 		onNavigationBarButtonTap(e) {
 			this.$refs.popup.open()
 		},
-		computed:{
-			...mapState(['hasLogin'])
-		},
 		methods: {
-			//请求数据
-			async loadData(){
-				let list = await this.$api.json('cartList'); 
-				let cartList = list.map(item=>{
-					item.checked = true;
-					return item;
-				});
+			...mapActions('otc', ['orderList']),
+			filter(side, status){
+				if(side){
+					this.query.side = side
+				}
+				if(status){
+					this.query.status = status
+				}
 			},
-			navTo(url){
-				uni.navigateTo({
-					url: url
+			reset(){
+				this.query.status = undefined
+				this.query.side = undefined
+			},
+			search(){
+				this.query.page = 1
+				this.list = []
+				this.loadingStatus = 'loadmore'
+				this.loadData()
+				this.$refs.popup.close();
+			},
+			async loadData(){
+				this.loadingStatus = 'loading'
+				this.orderList(this.query).then(res =>{
+					uni.stopPullDownRefresh();
+					this.empty = (res.total == 0)
+					this.isLastPage = (this.query.page == res.pages)
+					if(this.isLastPage){
+						this.loadingStatus = 'nomore'
+					} else {
+						this.loadingStatus = 'loadmore'
+					}
+					if(this.empty){
+						this.list = [];
+					} else {
+						this.list = this.list.concat(res.rows)
+					}
+				}).catch(error => {
+					uni.stopPullDownRefresh();
 				})
 			}
 		}
@@ -156,6 +215,12 @@
 			font-size: $font-md;
 			padding-bottom: 20upx;
 			padding-top: 30upx;
+		}
+		.filter-active{
+			border-width: 2rpx;
+			border-color: $font-color-blue;  
+			border-style: solid;
+			color: $font-color-blue;
 		}
 		.filter-pay{
 			display: flex;

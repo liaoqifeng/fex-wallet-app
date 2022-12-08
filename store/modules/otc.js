@@ -2,17 +2,34 @@ import {
 	payInfoList, 
 	addPayInfo, 
 	getPayInfo, 
+	getUsePayInfo,
 	updatePayInfo, 
 	activePayInfo,
 	deletePayInfo,
 	isMerchant,
 	getMerchant,
 	applyMerchant,
+	merchantDetail,
 	advertList,
 	addAdvert,
 	myAdvertList,
 	closeAdvert,
-	pauseAdvert
+	pauseAdvert,
+	createOrder,
+	cancelOrder,
+	payOrder,
+	completeOrder,
+	orderList,
+	getOrder,
+	getPaymentSetting,
+	getPaymentSettingDetail,
+	getPaymentMethodList,
+	getPaymentMethod,
+	getActivePaymentMethodList,
+	addPaymentMethod,
+	updatePaymentMethod,
+	activePaymentMethod,
+	deletePaymentMethod
 } from '@/api/otc'
 import {} from './../mutations_type'
 
@@ -27,6 +44,110 @@ const otc = {
 	},
 
 	actions: {
+		getPaymentSetting({
+			commit
+		}) {
+			return new Promise((resolve, reject) => {
+				getPaymentSetting().then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getPaymentSettingDetail({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				getPaymentSettingDetail(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getPaymentMethodList({
+			commit
+		}) {
+			return new Promise((resolve, reject) => {
+				getPaymentMethodList().then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getActivePaymentMethodList({
+			commit
+		}) {
+			return new Promise((resolve, reject) => {
+				getActivePaymentMethodList().then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getPaymentMethod({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				getPaymentMethod(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		addPaymentMethod({
+			commit
+		}, data) {
+			return new Promise((resolve, reject) => {
+				addPaymentMethod(data).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		updatePaymentMethod({
+			commit
+		}, data) {
+			return new Promise((resolve, reject) => {
+				updatePaymentMethod(data).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		activePaymentMethod({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				activePaymentMethod(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		deletePaymentMethod({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				deletePaymentMethod(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		
+		
+		
+		
+		
 		payInfoList({
 			commit
 		}) {
@@ -43,6 +164,17 @@ const otc = {
 		}, id) {
 			return new Promise((resolve, reject) => {
 				getPayInfo(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getUsePayInfo({
+			commit
+		}) {
+			return new Promise((resolve, reject) => {
+				getUsePayInfo().then(res => {
 					resolve(res)
 				}).catch(error => {
 					reject(error)
@@ -115,6 +247,17 @@ const otc = {
 				})
 			})
 		},
+		merchantDetail({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				merchantDetail(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
 		applyMerchant({
 			commit
 		}, data) {
@@ -175,6 +318,72 @@ const otc = {
 		}, id) {
 			return new Promise((resolve, reject) => {
 				pauseAdvert(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		createOrder({
+			commit
+		}, data) {
+			return new Promise((resolve, reject) => {
+				createOrder(data).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		orderList({
+			commit
+		}, data) {
+			return new Promise((resolve, reject) => {
+				orderList(data).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getOrder({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				getOrder(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		cancelOrder({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				cancelOrder(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		payOrder({
+			commit
+		}, data) {
+			return new Promise((resolve, reject) => {
+				payOrder(data).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		completeOrder({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				completeOrder(id).then(res => {
 					resolve(res)
 				}).catch(error => {
 					reject(error)

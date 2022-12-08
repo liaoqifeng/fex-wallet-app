@@ -4,66 +4,120 @@
 		<view class="coin-section m-t">
 			<view class="s-row">
 				<view class="col">
-					<image src="https://s1.bqiapp.com/coin/20181030_72_webp/bitcoin_200_200.webp?v=67" class="coinLogo"></image>
-					<text class="coin">BTC</text>
+					<image :src="coin.icon" class="coinLogo"></image>
+					<text class="coin">{{coin.symbol}}</text>
 				</view>
-				<view class="col r light" @click="navToSearch()">
-					<text class="subtitle">选择币种</text>
+				<view class="col r light" @click="navTo('/pages/public/coinList')">
+					<text class="subtitle">{{i18n.withdraw.selectCoin}}</text>
 					<uni-icons type="forward" size="20" class="arrow"></uni-icons>
 				</view>
 			</view>
+			<view class="chain" v-show="isChain">
+				<view class="label">{{i18n.withdraw.chainName}}</view>
+				<view class="row">
+					<view @click="selectChain(item)" class="item" :class="{'selected': item.tokenBase == deposit.chain}" v-for="(item, i) in deposit.chains">{{item.chain}}</view>
+				</view>
+			</view>
 			<view class="s-row qrcode">
-				<image src="../../static/qrcode.png" class="img"></image>
-				<view class="save">保存二维码到相册</view>
-				<text class="title">充币地址</text>
-				<text class="address">0xe2lsk1323ggdswwwwa2l222123bcbxsaa3ksdlksfdklkmad</text>
-				<view class="copy">复制</view>
+				<tki-qrcode ref="qrcode" :size="400" :onval="true" cid="qrcode" :val="qrcode.val" />
+				<view class="save" @click="save">{{i18n.recharge.qrcode}}</view>
+				<text class="title">{{i18n.recharge.rechargeAddr}}</text>
+				<text class="address">{{deposit.address}}</text>
+				<view class="copy" @click="paste">{{i18n.common.copy}}</view>
 			</view>
 			<view class="desc">
-				<text>请勿向上述地址充值任何非 ERC20_ USDT资产，否则资产将不可找回。</text>
-				<text>您充值至上述地址后，需要整个网络节点的确认，12次网络确认后到账，12次网络确认后可提币。</text>
-				<text>最小充值金额：1 USDT，小于最小金额的充值将不会上账且无法退回。</text>
-				<text>您的充值地址不会经常改变，可以重复充值；如有更改，我们会尽量通过网站公告或邮件通知您。</text>
-				<text>请务必确认电脑及浏览器安全，防止信息被篡改或泄露。</text>
+				{{i18n.recharge.tip1}} {{isChain ? chain.chain+'_'+coin.symbol : coin.symbol}} {{i18n.recharge.tip2}}。<br/><br/>
+				{{i18n.recharge.tip3}}，{{coin.depositConfirm}} {{i18n.recharge.tip4}}。<br/><br/>
+				<!--{{i18n.recharge.tip5}}：{{config.minWithdraw}} {{coin.symbol}}，{{i18n.recharge.tip6}}。<br/><br/>-->
+				{{i18n.recharge.tip7}}。<br/><br/>
+				{{i18n.recharge.tip8}}。<br/>
 			</view>
 		</view>
 	</view>
 </template>
-
 <script>
-	import {
-		mapState
-	} from 'vuex';
+	import { mapState, mapActions } from 'vuex'
+	import tkiQrcode from "@/components/tki-qrcode/tki-qrcode.vue"
 	import {uniIcons} from '@dcloudio/uni-ui'
+	import {commonMixin, authMixin} from '@/common/mixin/mixin.js'
 	export default {
-		components: {uniIcons},
+		components: {tkiQrcode, uniIcons},
+		mixins: [commonMixin, authMixin],
 		data() {
 			return {
-				total: 0, //总价格
-				allChecked: false, //全选状态  true|false
-				empty: false, //空白页现实  true|false
-				cartList: [],
+				coin: {},
+				chain: '',
+				isChain: false,
+				fee: 0,
+				showPrecision: 0,
+				chains: [],
+				account: {},
+				coins: [],
+				tips: {},
+				deposit: {},
+				qrcode: {
+					val: ''
+				}
 			};
 		},
-		onLoad(){
-			this.loadData();
+		onUnload(){
+			uni.$off('selectCoin', this.selectCoin)
 		},
-		computed:{
-			...mapState(['hasLogin'])
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.wallet.recharge
+			})
+		},
+		onLoad(){
+			uni.$on('selectCoin', this.selectCoin)
+			this.coinList().then(res =>{
+				this.coins = res.data
+				this.coin = res.data[0]
+				this.loadData()
+			})
+		},
+		onNavigationBarButtonTap(e) {
+			this.navTo(`/pages/wallet/detail?coin=${this.coin.symbol}&filterIndex=1`);
 		},
 		methods: {
-			//请求数据
+			...mapActions('common', ['coinList', 'coinTips']),
+			...mapActions('user', ['depositAddress']),
 			async loadData(){
-				let list = await this.$api.json('cartList'); 
-				let cartList = list.map(item=>{
-					item.checked = true;
-					return item;
-				});
-			},
-			navToSearch(){
-				uni.navigateTo({
-					url: '/pages/wallet/search'
+				this.depositAddress({coin: this.coin.symbol, chain: this.chain}).then(res =>{
+					this.deposit = res.data
+					this.isChain = (this.deposit.chains && this.deposit.chains.length > 0)
+					this.qrcode.val = res.data.address
+					this.$refs.qrcode & this.$refs.qrcode._makeCode()
 				})
+				this.coinTips(this.coin.symbol).then(res =>{
+					this.tips = res.data
+				})
+			},
+			selectChain(item){
+				this.chain = item.tokenBase
+				this.loadData()
+			},
+			selectCoin(data){
+				for(let i = 0; i < this.coins.length; i++){
+					let item = this.coins[i]
+					if(item.symbol === data.coin.item.name){
+						this.coin = item;
+						break;
+					}
+				}
+				this.loadData()
+			},
+			save(){
+				this.$refs.qrcode._saveCode()
+			},
+			paste() {
+				let $this = this
+				uni.setClipboardData({
+				    data: this.deposit.address,
+				    success: function () {
+				        $this.$api.msg($this.toast.copySuccess)
+				    }
+				});
 			}
 		}
 	}
@@ -75,6 +129,27 @@
 	}
 	.coin-section{
 		background: #fff;
+		.chain{
+			padding: 30upx 30upx 10upx 30upx;
+		}
+		.chain .row{
+			display: flex;
+			padding-top: 20upx;
+			.item{
+				width: 160upx;
+				height: 70upx;
+				line-height: 70upx;
+				background-color: $uni-color-subbg;
+				border-radius: 10upx;
+				margin-right: 20upx;
+				text-align: center;
+			}
+			.selected{
+				border: 1upx solid #007AFF;
+				background-color: #ffffff;
+				color: #007AFF;
+			}
+		}
 		.s-row{
 			background-color: $uni-color-subbg;
 			display:flex;

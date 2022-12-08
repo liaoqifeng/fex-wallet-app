@@ -4,7 +4,7 @@
 		<view class="carousel-section">
 			<!-- 背景色区域 -->
 			<swiper class="carousel" circular @change="swiperChange" autoplay="true">
-				<swiper-item v-for="(item, index) in carousels" :key="index" class="carousel-item">
+				<swiper-item @click="open(item)" v-for="(item, index) in carousels" :key="index" class="carousel-item">
 					<image :src="item.url" />
 				</swiper-item>
 			</swiper>
@@ -15,27 +15,58 @@
 				<text class="num">{{swiperLength}}</text>
 			</view>
 		</view>
-		<!-- 分类 -->
 		<view class="cate-section">
-			<!-- 文字滚动 -->
-			<!-- <uni-notice-bar show-icon="true" scrollable="true" single="true" text="[单行] 这是 NoticeBar 通告栏，这是 NoticeBar 通告栏，这是 NoticeBar 通告栏"></uni-notice-bar>
-			 -->
 			<noticeSwiper :list="notices"></noticeSwiper>
 		</view>
-		<view class="menu">
-			<view class="item exchange" @click="navTo('/pages/exchange/index', true)">
-				<image src="../../static/exchange.png"></image>
-				<text>快捷闪兑</text>
+		<scroll-view class="scroll-view-market" scroll-x="true">
+			<view class="market-item" v-for="(item, i) in topSymbols" :key="item.symbol" @click="navToKline(item)">
+				<view class="item">
+					<view class="t">{{item.title}}<text :class="topMakretMap[item.symbol].change | formatChangeCls">{{topMakretMap[item.symbol].change | formatChange}}</text></view>
+					<text class="c" :class="topMakretMap[item.symbol].change | formatChangeCls">{{topMakretMap[item.symbol] ? topMakretMap[item.symbol].close : '0.00'}}</text>
+					<text class="b">≈ {{topMakretMap[item.symbol].cny}} CNY</text>
+				</view>
 			</view>
-			<view class="item" @click="navTo('/pages/otc/otc')">
-				<image class="miner" src="../../static/miner.png"></image>
-				<text>法币交易</text>
+		</scroll-view>
+		<view class="line"></view>
+		<view class="otc">
+			<view class="fiat" @click="navTo('/pages/otc/otc')">
+				<image src="../../static/icon-fiat.png" mode="widthFix"></image>
+				<view class="label">
+					<text>{{ i18n.index.otc.title }}</text>
+					<text class="sub">{{ i18n.index.otc.support }}ETH、USDT</text>
+				</view>
+			</view>
+			<view @click="navTo('/pages/otc/otc')" class="r" style="padding-right: 30upx;">
+				<image src="../../static/images/home/icon-otc-r.png" mode="widthFix"></image>
+			</view>
+		</view>
+		<view class="menu">
+			<view class="fiat" @click="navTo('/pages/prediction/prediction')">
+				<image src="../../static/icon-prediction.png" mode="widthFix"></image>
+				<view class="label">
+					<text>{{ i18n.index.prediction.title }}</text>
+					<text class="sub">Prediction Market</text>
+				</view>
+			</view>
+			<view class="ex">
+				<view class="item exchange" @click="navTo('/pages/exchange/index', true)">
+					<image src="../../static/images/home/home-ex-icon.png"></image>
+					<text>{{ i18n.index.exchange.title }}</text>
+				</view>
+				<!-- <view class="item shop" @click="navTo('/pages/shop/index')">
+					<image class="miner" src="../../static/icon-shop.png"></image>
+					<text>Fex商城</text>
+				</view> -->
+				<view class="item shop" @click="navTo('/pages/finance/deposit')">
+					<image class="miner" src="../../static/images/home/home-stacking-icon.png"></image>
+					<text>{{ i18n.index.stacking.title }}</text>
+				</view>
 			</view>
 		</view>
 		<view class="advert">
-			<uni-swiper-dot :current="current" :mode="mode" :dotsStyles="dotsStyles">
+			<uni-swiper-dot :current="current" :mode="mode">
 			    <swiper class="swiper-box" autoplay="true">
-			        <swiper-item v-for="(item, index) in ads" :key="index" class="swiper-item">
+			        <swiper-item @click="open(item)" v-for="(item, index) in ads" :key="index" class="swiper-item">
 			        	<image :src="item.url" mode="widthFix"/>
 			        </swiper-item>
 			    </swiper>
@@ -44,11 +75,11 @@
 		<!-- 市值排行 -->
 		<view class="coin-section m-t">
 			<view class="s-header">
-				<view class="col">币种/流通市值</view>
-				<view class="col r">全球指数</view>
-				<view class="col r">24小时涨幅</view>
+				<view class="col">{{ i18n.index.market.title1 }}</view>
+				<view class="col r">{{ i18n.index.market.title2 }}</view>
+				<view class="col r">24{{ i18n.index.market.title3 }}</view>
 			</view>
-			<view class="s-row little-line" v-for="(item, i) in markets" :key="item.symbol">
+			<view class="s-row little-line"  @click="navTo(`/pages/market/index?code=${item.symbolCode}`)" v-for="(item, i) in markets" :key="item.symbol">
 				<view class="col light">
 					<image :src="item.icon" class="coinLogo"></image>
 					{{item.symbol}}
@@ -62,7 +93,9 @@
 			</view>
 		</view>
 		
-		
+		<!-- <view class="lottery-icon" @click="navTo('/pages/lottery/index')">
+			<image src="../../static/lottery_icon.png"></image>
+		</view> -->
 	</view>
 </template>
 
@@ -88,20 +121,32 @@
 				carousels: [],
 				ads: [],
 				current: 0,
-				mode: 'round',
-				dotsStyles:{  
-					bottom:100,  
-					backgroundColor: 'rgba(255, 255, 255,1)',  
-					border: '1px rgba(255, 255, 255,1) solid',  
-					color: '#fff',  
-					selectedBackgroundColor: 'rgba(255, 90, 95,0.9)',  
-					selectedBorder: '1px rgba(255, 90, 95,0.9) solid'  
-				}  
+				mode: 'round' ,
+				marketTimer: null,
+				topSymbols: [
+					{symbol: 'btcusdt', title: 'BTC/USDT'},
+					{symbol: 'ethusdt', title: 'ETH/USDT'},
+					{symbol: 'dotusdt', title: 'DOT/USDT'}
+				],
+				topMakretMap: {
+					'btcusdt': {},
+					'ethusdt': {},
+					'dotusdt': {}
+				}
 			};
 		},
 		filters:{
 			formatChange(v){
-				return parseFloat(v).toFixed(2) + '%'
+				return (v > 0 ? '+' : '') + parseFloat(v).toFixed(2) + '%'
+			},
+			formatChangeCls(v){
+				if(v == 0){
+					return ''
+				} else if(v > 0){
+					return 'upper-text'
+				} else {
+					return 'lower-text'
+				}
 			},
 			formatMarketcap(v){
 				return formatUnit(v);
@@ -109,23 +154,79 @@
 		},
 		onShow() {
 			this.getMaketList()
+			this.marketTimer =setInterval(() =>{
+				this.getMaketList()
+			}, 3000)
+			setTimeout(() =>{
+				this.loadTopMarket()
+			}, 500)
+			this.swiperCurrent = 0;
+			this.swiperLength = 0;
+			this.carousels = [];
+			this.ads = [];
+			this.notices = [];
+			this.loadData();
+		},
+		onPullDownRefresh() {
+			this.loadData()
+			this.getMaketList()
 		},
 		onLoad() {
-			this.loadData();
-			this.notices = ["国际站4月1日14:00开放MDC/USDT交易市场", "国际站4月2日10:00上线HKL", "关于国际站即将上线 GCCT（Global Cash Coin)"];
+		},
+		onHide() {
+			if(this.marketTimer){
+				clearInterval(this.marketTimer)
+			}
+			
+			let ch = `market.overviewv2`
+			let data = {
+			  "unsub": ch,
+			  "id": Date.now() + ""
+			}
+			this.$store.dispatch('WEBSOCKET_SEND', JSON.stringify(data))
+			uni.$off(ch, (res) => {})
+		},
+		onUnload() {
 		},
 		methods: {
 			...mapActions('common', ['marketList', 'adList', 'noticeList']),
-			/**
-			 * 请求静态数据只是为了代码不那么乱
-			 * 分次请求未作整合
-			 */
+			loadTopMarket(){
+				let $this = this
+				let ch = `market.overviewv2`
+				let params = {
+				  "sub": ch
+				}
+				this.$store.dispatch('WEBSOCKET_SEND', JSON.stringify(params))
+				uni.$on("sub."+ch, (res) => {
+					let map = res.data.data
+					for(let i = 0; i < 3; i++){
+						let symbol = this.topSymbols[i].symbol
+						if(map[symbol]){
+							let item = map[symbol]
+							let tick = {
+								open: item.o,
+								close: item.c,
+								low: item.l,
+								high: item.h,
+								vol: item.v,
+								amount: item.a
+							}
+							tick.change = parseFloat((tick.close - tick.open) / tick.open * 100).toFixed(2);
+							tick.cny = parseFloat(tick.close * 6.4).toFixed(2)
+							$this.topMakretMap[symbol] = tick
+						}
+					}
+					
+				})
+			},
 			async loadData() {
 				this.adList().then(res =>{
 					let casrousels = res.data.casrousels
 					this.swiperLength = casrousels.length
 					this.carousels = casrousels
 					this.ads = res.data.ads
+					
+					uni.stopPullDownRefresh()
 				})
 				this.noticeList().then(res =>{
 					this.notices = res.rows
@@ -140,6 +241,24 @@
 			swiperChange(e) {
 				const index = e.detail.current;
 				this.swiperCurrent = index;
+			},
+			navToKline(item){
+				uni.navigateTo({
+					url: `/pages/public/kline?symbol=${item.symbol}`
+				})
+			},
+			open(item){
+				if(item.link){
+					if(item.link.indexOf('http://') < 0 && item.link.indexOf('https://') < 0){
+						uni.navigateTo({
+							url: item.link
+						})
+					} else {
+						uni.navigateTo({
+							url: `/pages/public/web?url=${item.link}`
+						})
+					}
+				}
 			}
 		},
 		// #ifndef MP
@@ -175,6 +294,11 @@
 		background: #ffffff;
 		padding-top: 50upx;
 	}
+	.container{
+		// #ifdef H5
+		padding-bottom: 100upx;
+		// #endif
+	}
 	.m-t{
 		margin-top: 16upx;
 	}
@@ -191,31 +315,127 @@
 			}
 		}
 	}
-	.menu{
-		padding: 20upx 20upx;
+	.scroll-view-market {
+		width: 100%;
+	}
+	.market-item {
+		display: inline-block;
+		width: 33%;
+		.item{
+			padding: 30upx 0 30upx 0;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			text-align: center;
+			.t{
+				font-weight: bold;
+				font-size: $font-sm;
+			}
+			.c{
+				padding: 10upx 0 10upx 0;
+				font-size: $font-xl;
+				font-weight: bold;
+			}
+			.b{
+				font-size: $font-sm;
+				color: $font-color-disabled;
+			}
+		}
+	}
+	.otc{
+		padding: 0upx;
 		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		font-size: $font-base;
+		font-weight: bold;
+		background: #ffffff;
+		image{
+			width: 100upx;
+		}
+		.fiat{
+			display: flex;
+			flex-direction: row;
+			flex: 1;
+			align-items: center;
+			background: #ffffff;
+			padding-left: 30upx;
+			margin-right: 10upx;
+			padding: 20upx 30upx;
+			.label{
+				display: flex;
+				flex-direction: column;
+				padding-left: 20upx;
+			}
+			.sub{
+				font-size: $font-sm;
+				font-weight: normal;
+			}
+			text{
+				font-size: $font-md;
+			}
+		}
+	}
+	.menu{
+		padding: 20upx 0upx;
+		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
 		font-size: $font-base;
 		font-weight: bold;
 		background: $uni-color-gap;
-		.item{
-			width: 49%;
-			height: 100upx;
-			line-height: 100upx;
-			background: #ffffff;
+		.fiat{
+			display: flex;
+			flex-direction: row;
+			flex: 1;
 			align-items: center;
-			text-align: center;
-			vertical-align: middle;
+			background: #ffffff;
+			padding-left: 30upx;
+			margin-right: 10upx;
+			.label{
+				display: flex;
+				flex-direction: column;
+				padding-left: 20upx;
+			}
+			.sub{
+				font-size: $font-sm;
+				font-weight: normal;
+			}
+			image{
+				width: 100upx;
+			}
+			text{
+				font-size: $font-md;
+			}
 		}
-		image{
-			vertical-align: middle;
-			width: 40upx;
-			height: 45upx;
-			margin-right: 20upx;
-		}
-		.miner{
-			width: 35upx;
-			height: 35upx;
+		.ex{
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			.item{
+				width: 100%;
+				height: 100upx;
+				line-height: 100upx;
+				background: #ffffff;
+				align-items: center;
+				text-align: center;
+				vertical-align: middle;
+			}
+			.shop{
+				margin-top: 10upx;
+			}
+			image{
+				vertical-align: middle;
+				width: 50upx;
+				height: 55upx;
+				margin-right: 20upx;
+			}
+			.miner{
+				width: 45upx;
+				height: 45upx;
+			}
 		}
 	}
 	/* 头部 轮播图 */
@@ -431,5 +651,17 @@
 		}
 	}
 	
+	.lottery-icon{
+		position: fixed;
+		bottom: 300upx;
+		right: 20upx;
+		z-index: 99999999;
+		width: 100upx;
+		height: 100upx;
+		image{
+			width: 100upx;
+			height: 100upx;
+		}
+	}
 
 </style>

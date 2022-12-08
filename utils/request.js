@@ -12,11 +12,17 @@ export default function $http(options) {
 	if(token){
 		_config.header.Authorization = token;
 	}
+	
+	const lang = uni.getStorageSync('language');
+	_config.header['Accept-Language'] = lang ? lang.replace("_", "-") : 'zh-CN';
+	
     _config.complete = (response) => {
        // 登录失效这边后台是返回403看情况
-	   if(response.data.code === 403){
-	   //返回登录界面
-	       uni.navigateTo({
+	   if(response.data.code === 403 || response.data.code === 1002){
+		   uni.setStorageSync('token', '');
+		   uni.setStorageSync('loginInfo', '');
+		   //返回登录界面
+	       uni.reLaunch({
 		   	url:'/pages/public/login'
 		   })
 		   uni.showToast({
@@ -25,6 +31,8 @@ export default function $http(options) {
 		    });
 	   } else if(response.data.code === 200){
 		    resolve(response.data);
+	   } else if(response.data.code === -100){
+		    reject(response.data);
 	   } else {
 		  uni.showToast({
 		       icon: 'none',

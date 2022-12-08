@@ -1,44 +1,92 @@
 <template>
 	<view>
 		<view class="notice-item">
-			<text class="time">11:30</text>
-			<view class="content">
-				<text class="title">以太坊上的通用经济抽象</text>
-				<text class="introduce">
-					尽管经济抽象并非一个新概念，但此前切实可行的用例寥寥无几。在本文中，我们将讨论如何实现一套通用的经济抽象方法
-				</text>
-				<view class="bot b-t">
-					<text>查看详情</text>
-					<text class="more-icon yticon icon-you"></text>
-				</view>
+			<view @click="navTo(`/pages/notice/detail?id=${item.noticeId}`)" class="content little-line" v-for="(item, index) in notices">
+				<text class="title">{{item.noticeTitle}}</text>
 			</view>
 		</view>
+		<u-loadmore v-show="total > 10" :load-text="loadText" :status="loadingStatus" bg-color="#f8f8f8"/>
 	</view>
 </template>
 
 <script>
+	import {
+		mapState,
+		mapActions
+	} from 'vuex'
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default {
+		mixins: [commonMixin],
 		data() {
 			return {
-
+				notices: [],
+				total: 0,
+				empty: false, //空白页现实  true|false
+				query: {
+					page: 1,
+					limit: 10,
+					classfiy: 0
+				},
+				totalCount: 0,
+				loadingStatus: 'loadmore',
+				isLastPage: false
 			}
 		},
+		onShow(){
+			uni.setNavigationBarTitle({
+				title: this.i18n.notice.title
+			})
+			this.getNoticeList()
+		},
+		onReachBottom(){
+			if(!this.isLastPage){
+				this.query.page += 1
+				this.getNoticeList()
+			}
+		},
+		onPullDownRefresh() {
+			this.notices = []
+			this.query.page = 1
+			this.getNoticeList();
+		},
 		methods: {
-
+			...mapActions('common', ['noticeList']),
+			getNoticeList(){
+				this.loadingStatus = 'loading'
+				this.noticeList(this.query).then(res =>{
+					uni.stopPullDownRefresh()
+					this.empty = res.total <= 0
+					this.total = res.total
+					this.isLastPage = (this.query.page == res.pages)
+					if(this.isLastPage){
+						this.loadingStatus = 'nomore'
+					} else {
+						this.loadingStatus = 'loadmore'
+					}
+					if(this.empty){
+						this.notices = [];
+					} else {
+						this.notices = this.notices.concat(res.rows)
+					}
+				}).catch(error =>{
+					this.loadingStatus = 'loadmore'
+					uni.stopPullDownRefresh()
+				})
+			}
 		}
 	}
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 	page {
-		background-color: #f7f7f7;
-		padding-bottom: 30upx;
+		background-color: $page-color-base;
 	}
 
 	.notice-item {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		margin: 20upx 0;
 	}
 
 	.time {
@@ -53,17 +101,18 @@
 
 	.content {
 		width: 710upx;
-		padding: 0 24upx;
+		padding: 10upx 24upx;
 		background-color: #fff;
 		border-radius: 4upx;
+		font-weight: bold;
 	}
 
 	.title {
 		display: flex;
 		align-items: center;
-		height: 90upx;
 		font-size: 32upx;
 		color: #303133;
+		padding: 20upx 0;
 	}
 
 	.img-wrapper {
@@ -93,25 +142,4 @@
 		color: #fff;
 	}
 
-	.introduce {
-		display: inline-block;
-		padding: 16upx 0;
-		font-size: 28upx;
-		color: #606266;
-		line-height: 38upx;
-	}
-
-	.bot {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		height: 80upx;
-		font-size: 24upx;
-		color: #707070;
-		position: relative;
-	}
-
-	.more-icon {
-		font-size: 32upx;
-	}
 </style>

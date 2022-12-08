@@ -1,21 +1,119 @@
 {
 	"pages": [
-
+		{
+			"path": "pages/index/guide",
+			"style": {
+				"navigationBarTitleText": "启动页",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
 		{
 			"path": "pages/index/index",
 			"style": {
 				// #ifdef MP 
 				"navigationBarTitleText": "FexCoin",
 				// #endif 
-				"navigationStyle": "custom"
-				/* "app-plus": {
-					"titleView":false,
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
+			}
+		},{
+			"path": "pages/lottery/index",
+			"style": {
+				"navigationBarTitleText": "抽奖",
+				// #ifdef MP
+				"navigationStyle": "custom",
+				// #endif
+				"app-plus": {
+					"bounce": "none",
 					"titleNView": {
 						"type": "transparent"
 					}
-				} */
+				}
 			}
-		},{
+		},
+		{
+			"path": "pages/finance/deposit",
+			"style": {
+				"navigationBarTitleText": "存币理财",
+				"navigationBarBackgroundColor": "#5E7EEE",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/finance/depositDetail",
+			"style": {
+				"navigationBarTitleText": "活动详情",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/finance/myOrder",
+			"style": {
+				"navigationBarTitleText": "我的理财",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/finance/historyOrder",
+			"style": {
+				"navigationBarTitleText": "理财记录",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/mining/index",
+			"style": {
+				"navigationBarTitleText": "云算力",
+				"navigationBarBackgroundColor": "#1866fe",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+								"fontSrc": "/static/font/fexfont.ttf",
+								"text": "\ue605",
+								"fontSize": "20",
+								"color": "#ffffff",
+								"width": "40px",
+								"background": "rgba(0,0,0,0)"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/mining/detail",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#1866fe",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/mining/my",
+			"style": {
+				"navigationBarTitleText": "我的算力",
+				"navigationBarBackgroundColor": "#1866fe",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/mining/profit",
+			"style": {
+				"navigationBarTitleText": "产出明细",
+				"navigationBarBackgroundColor": "#1866fe",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
 			"path": "pages/exchange/index",
 			"style": {
 				"navigationBarTitleText": "闪兑",
@@ -25,9 +123,35 @@
 			}
 		},
 		{
+			"path": "pages/prediction/prediction",
+			"style": {
+				"navigationBarTitleText": "预言机",
+				// #ifdef MP
+				"navigationStyle": "custom",
+				// #endif
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"type": "transparent"
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/prediction/history",
+			"style": {
+				"navigationBarTitleText": "预测记录",
+				"app-plus" : {
+					"softinputMode": "adjustResize"
+				}
+			}
+		},
+		{
 			"path": "pages/otc/otc",
 			"style": {
 				"navigationBarTitleText": "法币交易",
+				"navigationBarBackgroundColor": "#0952C3",
+				"navigationBarTextStyle": "white",
 				//"disableScroll": false, // 禁止滚动, 解决scroll-view在Android小程序卡顿的问题
 				//"enablePullDownRefresh" : false, // 不开启下拉刷新, 默认就是false
 				"app-plus" : {
@@ -40,7 +164,9 @@
 							"width": "65%",
 							"right": "0px"
 						}
-					}]
+					}],
+					"softinputNavBar": "none",
+					"softinputMode": "adjustResize"
 				}
 			}
 		},
@@ -48,6 +174,7 @@
 			"path": "pages/otc/order/list",
 			"style": {
 				"navigationBarTitleText": "订单记录",
+				"enablePullDownRefresh": true,
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -75,9 +202,8 @@
 		{
 			"path": "pages/otc/order/detail",
 			"style": {
-				"navigationBarTitleText": "我的资产",
-				"navigationBarBackgroundColor": "#0952C3",
-				"navigationBarTextStyle": "white",
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
 				"app-plus": {
 					"titleView":false,
 					"titleNView": {
@@ -105,6 +231,12 @@
 			}
 		},
 		{
+			"path": "pages/otc/merchant/orderList",
+			"style": {
+				"navigationBarTitleText": "订单列表"
+			}
+		},
+		{
 			"path": "pages/otc/merchant/advertList",
 			"style": {
 				"navigationBarTitleText": "广告列表"
@@ -124,10 +256,25 @@
 			}
 		},
 		{
+			"path": "pages/market/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom" ,// 隐藏系统导航栏
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/market/intro",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
 			"path": "pages/wallet/wallet",
 			"style": {
 				"navigationBarTitleText": "我的资产",
-				"navigationBarBackgroundColor": "#0952C3",
+				"navigationBarBackgroundColor": "#1866fe",
 				"navigationBarTextStyle": "white",
 				"enablePullDownRefresh": true,
 				"app-plus": {
@@ -169,7 +316,18 @@
 			"style": {
 				"navigationBarTitleText": "充币",
 				"app-plus": {
-					"bounce": "none"
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+								"fontSrc": "/static/font/fexfont.ttf",
+								"text": "\ue605",
+								"fontSize": "20",
+								"color": "#303133",
+								"width": "40px",
+								"background": "rgba(0,0,0,0)"
+							}
+						]
+					}
 				}
 			}
 		},{
@@ -177,7 +335,18 @@
 			"style": {
 				"navigationBarTitleText": "提币",
 				"app-plus": {
-					"bounce": "none"
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+								"fontSrc": "/static/font/fexfont.ttf",
+								"text": "\ue605",
+								"fontSize": "20",
+								"color": "#303133",
+								"width": "40px",
+								"background": "rgba(0,0,0,0)"
+							}
+						]
+					}
 				}
 			}
 		}, {
@@ -198,28 +367,49 @@
             }
         },
 		{
-			"path": "pages/product/product",
-			"style": {
-				"navigationBarTitleText": "详情展示",
-				"app-plus": {
-					"titleNView": {
-						"type": "transparent"
-					}
-				}
-			}
-		}, {
 			"path": "pages/set/set",
 			"style": {
 				"navigationBarTitleText": "设置"
 			}
 		},
-
 		{
-			"path": "pages/userinfo/userinfo",
+			"path": "pages/set/help",
 			"style": {
-				"navigationBarTitleText": "修改资料"
+				"navigationBarTitleText": "帮助中心",
+				"navigationBarBackgroundColor": "#4574e8",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"titleView":false,
+					"titleNView": {
+						"type": "transparent"
+					}
+				}
 			}
-		}, {
+		},
+		{
+			"path": "pages/set/about",
+			"style": {
+				"navigationBarTitleText": "关于Fex"
+			}
+		},
+		{
+			"path": "pages/public/kline",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#181B2A"
+			}
+		},
+		{
+			"path": "pages/public/h5kline",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#181B2A"
+			}
+		},
+		{
 			"path": "pages/public/login",
 			"style": {
 				"navigationBarTitleText": "",
@@ -239,6 +429,16 @@
 				}
 			}
 		}, {
+			"path": "pages/public/forget",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"animationType": "slide-in-bottom"
+				}
+			}
+		}, {
 			"path": "pages/public/coinList",
 			"style": {
 			    "app-plus": {
@@ -248,7 +448,7 @@
 							"align": "left",
 							"backgroundColor": "rgba(231, 231, 231,.7)",
 							"borderRadius": "16px",
-							"placeholder": "搜索币种",
+							"placeholder": "",
 							"placeholderColor": "#606266"
 						}
 			        }
@@ -258,29 +458,49 @@
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "我的",
+				"navigationBarBackgroundColor": "#1866fe",
+				"navigationBarTextStyle": "white",
 				// #ifdef MP
 				"navigationStyle": "custom",
 				// #endif
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
-						"type": "transparent",
-						"buttons": [{
-								"fontSrc": "/static/yticon.ttf",
-								"text": "\ue60f",
-								"fontSize": "24",
-								"color": "#303133",
-								"width": "46px",
-								"background": "rgba(0,0,0,0)"
-							}
-						]
+						"type": "transparent"
+					}
+				}
+			}
+			
+		},{
+			"path": "pages/user/signin",
+			"style": {
+				"navigationBarTitleText": "签到",
+				// #ifdef MP
+				"navigationStyle": "custom",
+				// #endif
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"type": "transparent"
 					}
 				}
 			}
 		}, {
 			"path": "pages/user/invit",
 			"style": {
-				"navigationBarTitleText": "邀请攻略"
+				"navigationBarTitleText": "邀请攻略",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#1866fe"
+			}
+		},{
+			"path": "pages/user/googleSetting",
+			"style": {
+				"navigationBarTitleText": "谷歌验证器设置"
+			}
+		},{
+			"path": "pages/user/googleBind",
+			"style": {
+				"navigationBarTitleText": "绑定谷歌身份验证器"
 			}
 		},{
 			"path": "pages/user/safe",
@@ -327,6 +547,32 @@
 				}
 			}
 		},{
+			"path": "pages/user/payment/method",
+			"style": {
+				"navigationBarTitleText": "收款方式",
+				"navigationBarBackgroundColor": "#f8f8f8",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+								"fontSrc": "/static/font/font_1078604_w4kpxh0rafi.ttf",
+								"text": "\ue60a",
+								"fontSize": "24",
+								"color": "#303133",
+								"width": "40px",
+								"background": "rgba(0,0,0,0)"
+							}
+						]
+					}
+				}
+			}
+		},{
+			"path": "pages/user/payment/update",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#f8f8f8"
+			}
+		},{
 			"path": "pages/user/updatePayType",
 			"style": {
 				"navigationBarTitleText": ""
@@ -363,104 +609,84 @@
 				}
 			}
 		},{
-			"path": "pages/detail/detail",
+			"path": "pages/user/realname",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "实名认证",
+				"navigationBarBackgroundColor": "#4574e8",
+				"navigationBarTextStyle": "white",
 				"app-plus": {
+					"titleView":false,
 					"titleNView": {
 						"type": "transparent"
 					}
 				}
 			}
-		}, {
-			"path": "pages/order/order",
-			"style": {
-				"navigationBarTitleText": "我的订单",
-				"app-plus": {
-					"bounce": "none"
-				}
+		},
+		{
+            "path" : "pages/notice/notice",
+            "style" : {
+				"navigationBarTitleText": "系统公告",
+				"enablePullDownRefresh": true
 			}
-		}, {
-			"path": "pages/money/money",
-			"style": {}
-		}, {
-			"path": "pages/order/createOrder",
-			"style": {
-				"navigationBarTitleText": "创建订单"
+        },
+		{
+            "path" : "pages/notice/detail",
+            "style" : {
+				"navigationBarTitleText": "公告详情"
 			}
-		}, {
-			"path": "pages/address/address",
-			"style": {
-				"navigationBarTitleText": "收货地址"
-			}
-		}, {
-			"path": "pages/address/addressManage",
+        },
+		{
+			"path": "pages/public/web",
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		}, {
-			"path": "pages/money/pay",
-			"style": {
-				"navigationBarTitleText": "支付"
-			}
-		},
-		{
-			"path": "pages/money/paySuccess",
-			"style": {
-				"navigationBarTitleText": "支付成功"
-			}
 		}
-	    ,{
-            "path" : "pages/notice/notice",
-            "style" : {
-				"navigationBarTitleText": "通知"
-			}
-        }
-        ,{
-            "path" : "pages/category/category",
-            "style" : {
-				"navigationBarTitleText": "分类",
-				"app-plus": {
-					"bounce": "none"
-				}
-			}
-        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#f8f8f8"
+		"backgroundColor": "#f8f8f8",
+		"maxWidth": 720
 	},
 	"tabBar": {
 		"color": "#C0C4CC",
-		"selectedColor": "#1890ff",
+		"selectedColor": "#1866fe",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"iconPath": "static/tabbar/tab-coin.png",
-				"selectedIconPath": "static/tabbar/tab-coin-active.png",
+				"iconPath": "static/images/tabbar/tab-coin.png",
+				"selectedIconPath": "static/images/tabbar/tab-coin-active.png",
 				"text": "行情"
 			},
 			{
 				"pagePath": "pages/news/news",
-				"iconPath": "static/tabbar/tab-news.png",
-				"selectedIconPath": "static/tabbar/tab-news-active.png",
+				"iconPath": "static/images/tabbar/tab-news.png",
+				"selectedIconPath": "static/images/tabbar/tab-news-active.png",
 				"text": "资讯"
 			},
 			{
+				"pagePath": "pages/mining/index",
+				"iconPath": "static/images/tabbar/tab-mining.png",
+				"selectedIconPath": "static/images/tabbar/tab-mining-active.png",
+				"text": "云算力"
+			},
+			{
 				"pagePath": "pages/wallet/wallet",
-				"iconPath": "static/tabbar/tab-wallet.png",
-				"selectedIconPath": "static/tabbar/tab-wallet-active.png",
+				"iconPath": "static/images/tabbar/tab-wallet.png",
+				"selectedIconPath": "static/images/tabbar/tab-wallet-active.png",
 				"text": "钱包"
 			},
 			{
 				"pagePath": "pages/user/user",
-				"iconPath": "static/tabbar/tab-my.png",
-				"selectedIconPath": "static/tabbar/tab-my-active.png",
+				"iconPath": "static/images/tabbar/tab-my.png",
+				"selectedIconPath": "static/images/tabbar/tab-my-active.png",
 				"text": "我的"
 			}
 		]
+	},
+	"easycom": {
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
 	}
 }

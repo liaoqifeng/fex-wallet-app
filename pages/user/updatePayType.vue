@@ -2,42 +2,45 @@
 	<view class="container">
 		<block v-if="config.type == 0">
 			<view class="list-cell b-b m-t" hover-class="cell-hover" :hover-stay-time="50">
-				<text class="cell-tit">姓名</text>
-				<input v-model="form.username" class="cell-input" placeholder="请输入姓名"/>
+				<text class="cell-tit">{{i18n.payType.username}}</text>
+				<input v-model="form.username" class="cell-input" :placeholder="`${i18n.payType.input}${i18n.payType.username}`"/>
 			</view>
 			<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-				<text class="cell-tit">银行卡号</text>
-				<input v-model="form.accountNo" class="cell-input" placeholder="请输入银行卡号"/>
+				<text class="cell-tit">{{i18n.payType.bankNo}}</text>
+				<input v-model="form.accountNo" class="cell-input" :placeholder="`${i18n.payType.input}${i18n.payType.bankNo}`"/>
 			</view>
 			<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-				<text class="cell-tit">开户银行</text>
-				<input v-model="form.bankName" class="cell-input" placeholder="请输入开户行"/>
+				<text class="cell-tit">{{i18n.payType.bankName}}</text>
+				<input v-model="form.bankName" class="cell-input" :placeholder="`${i18n.payType.input}${i18n.payType.bankName}`"/>
 			</view>
 			<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-				<text class="cell-tit">开户支行</text>
-				<input v-model="form.subBranch" class="cell-input" placeholder="请输入开户支行"/>
+				<text class="cell-tit">{{i18n.payType.subBranch}}</text>
+				<input v-model="form.subBranch" class="cell-input" :placeholder="`${i18n.payType.input}${i18n.payType.subBranch}`"/>
 			</view>
 		</block>
 		<block v-if="config.type == 1">
 			<view class="list-cell b-b m-t" hover-class="cell-hover" :hover-stay-time="50">
-				<text class="cell-tit">姓名</text>
-				<input v-model="form.username" class="cell-input" placeholder="请输入姓名"/>
+				<text class="cell-tit">{{i18n.payType.username}}</text>
+				<input v-model="form.username" class="cell-input" :placeholder="`${i18n.payType.input}${i18n.payType.username}`"/>
 			</view>
 			<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-				<text class="cell-tit">账号</text>
-				<input v-model="form.accountNo" class="cell-input" placeholder="请输入账号"/>
+				<text class="cell-tit">{{i18n.payType.account}}</text>
+				<input v-model="form.accountNo" class="cell-input" :placeholder="`${i18n.payType.input}${i18n.payType.account}`"/>
 			</view>
 			<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-				<text class="cell-tit">二维码</text>
-				<view class="upload">
+				<text class="cell-tit">{{i18n.payType.qrcode}}</text>
+				<view class="placeholder" v-show="form.payQrcode != undefined">
+					<image :src="form.payQrcode"></image>
+				</view>
+				<view class="upload" @click="handleUpload" v-show="form.payQrcode == undefined">
 					<image src="../../static/icon-upload.png"></image>
 					<view class="tip">
-						请上传你的收款码图片(jpg/jpeg/png格式,大小不超过2M)
+						{{i18n.payType.tip1}}
 					</view>
 				</view>
 			</view>
 		</block>
-		<button class="submit" @click="handleSubmit">确认</button>
+		<button class="submit" @click="handleSubmit">{{i18n.common.ok}}</button>
 	</view>
 </template>
 
@@ -46,7 +49,9 @@
 		mapState,
 		mapActions
 	} from 'vuex' 
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default {
+		mixins: [commonMixin],
 		data() {
 			return {
 				config: undefined,
@@ -63,7 +68,6 @@
 		},
 		onLoad(options) {
 			this.config = JSON.parse(options.data)
-			console.log(this.config)
 			uni.setNavigationBarTitle({
 				title: this.config.name
 			});
@@ -74,27 +78,41 @@
 				})
 			}
 		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.payType.options[this.config.code]
+			})
+		},
 		methods:{
 			...mapActions('otc', ['addPayInfo', 'getPayInfo', 'updatePayInfo']),
+			handleUpload(){
+				this.$upload(this.uploadSuccess, this.uploadProgress)
+			},
+			uploadSuccess(res){
+				this.form.payQrcode = res.url
+			},
+			uploadProgress(res){
+				console.log("上传进度:", res)
+			},
 			handleSubmit(){
 				if(!this.form.username){
-					this.$api.msg('请输入姓名')
+					this.$api.msg(this.i18n.toast.inputName)
 					return;
 				}
 				if(!this.form.accountNo){
 					if(this.config.code == 'UnionPay'){
-						this.$api.msg('请输入银行卡号')
+						this.$api.msg(this.i18n.toast.inputBankNo)
 					} else {
-						this.$api.msg('请输入帐号')
+						this.$api.msg(this.i18n.toast.inputAccount)
 					}
 					return;
 				}
 				if(this.config.code == 'UnionPay' && !this.form.bankName){
-					this.$api.msg('请输入开户银行')
+					this.$api.msg(this.i18n.toast.inputBank)
 					return;
 				}
 				if(this.config.code == 'UnionPay' && !this.form.subBranch){
-					this.$api.msg('请输入开户支行')
+					this.$api.msg(this.i18n.toast.inputSubBank)
 					return;
 				}
 				if(this.config.code != 'UnionPay'){
@@ -102,10 +120,10 @@
 				}
 				this.form.type = this.config.code
 				if(this.config.id){
-					uni.showLoading({ title: '修改中' });
+					uni.showLoading({ title: this.i18n.common.request });
 					this.updatePayInfo(this.form).then(res => {
 						uni.hideLoading()
-						this.$api.msg('修改成功', 1000, false, 'none', function() {
+						this.$api.msg(this.i18n.toast.submitSuccess, 1000, false, 'none', function() {
 							setTimeout(function() {
 								uni.navigateBack({})
 							}, 1000)
@@ -114,10 +132,10 @@
 						uni.hideLoading()
 					})
 				} else {
-					uni.showLoading({ title: '添加中' });
+					uni.showLoading({ title: this.i18n.common.request });
 					this.addPayInfo(this.form).then(res => {
 						uni.hideLoading()
-						this.$api.msg('添加成功', 1000, false, 'none', function() {
+						this.$api.msg(this.i18n.toast.submitSuccess, 1000, false, 'none', function() {
 							setTimeout(function() {
 								uni.navigateBack({})
 							}, 1000)
@@ -140,7 +158,7 @@
 	.list-cell{
 		display:flex;
 		flex-direction: row;
-		align-items:baseline;
+		align-items: center;
 		padding: 30upx $page-row-spacing;
 		line-height:80upx;
 		position:relative;
@@ -176,6 +194,13 @@
 		.cell-tip{
 			font-size: $font-base;
 			color: $font-color-light;
+		}
+		.placeholder{
+			display: flex;
+			image{
+				width: 150upx;
+				height: 150upx;
+			}
 		}
 		.upload{
 			width: 75%;

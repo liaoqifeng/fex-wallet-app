@@ -1,12 +1,14 @@
 <template>
 	<view class="empty-content">
 		<image class="empty-content-image" :src="setSrc" mode="aspectFit"></image>
-		<text class="label">暂无记录</text>
+		<text class="label">{{i18n.common.noData}}</text>
 	</view>
 </template>
 
 <script>
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default {
+		mixins: [commonMixin],
 		props: {
 			src: {
 				type: String,

@@ -2,7 +2,7 @@
     <view class="container">  
 		<view class="pay-group" v-for="(item, i) in list" :key="item.configPaymentInfo.code">
 			<view class="header">
-				<text class="title">{{item.configPaymentInfo.name}}<text class="count">共{{item.payInfos.length}}个</text></text>
+				<text class="title">{{ i18n.payType.options[item.configPaymentInfo.code]}}<text class="count">({{item.payInfos.length}})</text></text>
 				<!-- <text class="add" @click="navTo('/pages/user/updatePayType')">添加</text> -->
 			</view>
 			<view v-for="(info, j) in item.payInfos" :key="info.id" class="item" :class="'item-bg-' + info.type">
@@ -25,9 +25,10 @@
 				</view>
 			</view>
 			<view class="empty" v-if="item.payInfos.length <= 0">
-				暂无{{item.configPaymentInfo.name}}
+				{{i18n.common.noData}}
 			</view>
 		</view>
+		<u-action-sheet @click="onClickSheet" :cancel-text="i18n.common.cancel" :list="payTypeNames" v-model="showSheet"></u-action-sheet>
     </view>  
 </template>  
 <script>  
@@ -35,30 +36,37 @@
     	mapState,
     	mapActions
     } from 'vuex'  
+	import {commonMixin} from '@/common/mixin/mixin.js'
     export default {
+		mixins: [commonMixin],
 		data(){
 			return {
 				list: [],
-				payTypeNames: []
+				payTypeNames: [],
+				showSheet: false
 			}
 		},
 		onShow(){
+			uni.setNavigationBarTitle({
+				title: this.i18n.my.payin
+			})
 			this.getList()
 		},
 		// #ifndef MP
 		onNavigationBarButtonTap(e) {
 			let $this = this;
-			uni.showActionSheet({
-			    itemList: this.payTypeNames,
-			    success: function (res) {
-			        let i = res.tapIndex
-					uni.navigateTo({
-						url: "/pages/user/updatePayType?data=" + encodeURIComponent(JSON.stringify($this.list[i].configPaymentInfo))
-					})
-			    },
-			    fail: function (res) {
-			    }
-			});
+			$this.showSheet = true
+			// uni.showActionSheet({
+			//     itemList: this.payTypeNames,
+			//     success: function (res) {
+			//         let i = res.tapIndex
+			// 		uni.navigateTo({
+			// 			url: "/pages/user/updatePayType?data=" + encodeURIComponent(JSON.stringify($this.list[i].configPaymentInfo))
+			// 		})
+			//     },
+			//     fail: function (res) {
+			//     }
+			// });
 		},
 		// #endif
 		filters: {
@@ -71,9 +79,17 @@
 			getList(){
 				this.payInfoList().then(res =>{
 					this.list = res.data
+					let arr = []
 					for(let i = 0; i < this.list.length; i++){
-						this.payTypeNames[i] = this.list[i].configPaymentInfo.name
+						arr.push({text: this.i18n.payType.options[this.list[i].configPaymentInfo.code]})//this.list[i].configPaymentInfo.name
 					}
+					this.payTypeNames = arr
+				})
+			},
+			onClickSheet(index){
+				console.log(index)
+				uni.navigateTo({
+					url: "/pages/user/updatePayType?data=" + encodeURIComponent(JSON.stringify(this.list[index].configPaymentInfo))
 				})
 			},
 			handleView(item, id){
@@ -153,13 +169,13 @@
 			font-size: $font-md;
 		}
 		.item-bg-Alipay{
-			background: linear-gradient(left, rgba(55, 131, 217,0.7), rgba(55, 131, 217,1));
+			background: linear-gradient(50deg, rgba(55, 131, 217,0.7), rgba(55, 131, 217,1));
 		}
 		.item-bg-UnionPay{
-			background: linear-gradient(left, rgba(255,0,0,0.7), rgba(255,0,0,1));
+			background: linear-gradient(50deg, rgba(255,0,0,0.7), rgba(255,0,0,1));
 		}
 		.item-bg-Wechat{
-			background: linear-gradient(left, rgba(42, 189, 119,0.7), rgba(42, 189, 119,1));
+			background: linear-gradient(50deg, rgba(42, 189, 119,0.7), rgba(42, 189, 119,1));
 		}
 		.item{
 			margin: 20upx 0upx;

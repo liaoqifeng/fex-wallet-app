@@ -1,23 +1,18 @@
 <template>
 	<view class="container">
-		<view class="list-cell b-b m-t"  @click="navTo('交易密码')" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">手机号</text>
-			<text class="cell-more">{{loginInfo.mobile}}</text>
+		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
+			<input class="cell-input" type="password" v-model="form.loginPassword" :placeholder="i18n.toast.inputLoginPwd"/>
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input class="cell-input" v-model="authCode.captchaCode" placeholder="请输入验证码"/>
-			<button :class="[isDisableCode?'cell-btn btn-disabled':'cell-btn']" :disabled="isDisableCode" @click="toSendSms">{{captchaTxt}}</button>
+			<input class="cell-input" type="password" maxlength="6" v-model="form.newPwd" :placeholder="i18n.accountsafe.loginpwd.pwdPlacehold"/>
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input class="cell-input" v-model="form.newPwd" placeholder="请输入新密码"/>
-		</view>
-		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input class="cell-input" v-model="form.againPwd" placeholder="请重新输入密码"/>
+			<input class="cell-input" type="password" maxlength="6" v-model="form.againPwd" :placeholder="i18n.accountsafe.loginpwd.againPlacehold"/>
 		</view>
 		<view class="list-cell tip" hover-class="cell-hover" :hover-stay-time="50">
-			<text>支付密码为6位数字</text>
+			<text>{{i18n.accountsafe.tradepwd.tip}}</text>
 		</view>
-		<button :disabled="loading" class="submit" @click="submit">确认</button>
+		<button :disabled="loading" class="submit" @click="submit">{{i18n.common.ok}}</button>
 	</view>
 </template>
 
@@ -27,17 +22,20 @@
 		mapActions
 	} from 'vuex'
 	import {isPayPassword} from '../../utils/validate'
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default {
+		mixins: [commonMixin],
 		data() {
 			return {
 				loading: false,
-				isDisableCode: false,
-				captchaTxt: '获取验证码',
+				seconds: 60,
+				tips: '',
 				authCode: {
 					captchaCode: undefined,
 					token: undefined
 				},
 				form: {
+					loginPassword: undefined,
 					newPwd: undefined,
 					againPwd: undefined
 				}
@@ -46,57 +44,37 @@
 		computed: {
 			...mapState('user', ['loginInfo'])
 		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.common.update + this.i18n.accountsafe.tradepwd.title
+			})
+		},
 		methods:{
-			...mapActions('common', ['sendSms']),
-			...mapActions('user', ['updatePayPwd']),
-			toSendSms(){
-				let data = {
-					type: this.$g.CAPTCHA_TYPE.COMMON,
-					number: this.loginInfo.mobile
-				}
-				this.isDisableCode = true
-				this.sendSms(data).then(res => {
-					this.authCode.token = res.data
-					let i = 120;
-					var timer = setInterval(() => {
-						this.captchaTxt = i + 's'
-						i = i - 1;
-						if(i == 0){
-							clearInterval(timer);
-							this.isDisableCode = false
-							this.captchaTxt = '获取验证码'
-						}
-					}, 1000)
-				}).catch(error => {
-					this.isDisableCode = false
-				})
-			},
+			...mapActions('user', ['updatePayPassword']),
 			submit(){
-				if(!this.authCode.captchaCode){
-					this.$api.msg('请输入验证码')
+				if(!this.form.loginPassword){
+					this.$api.msg(this.i18n.toast.inputLoginPwd)
 					return;
 				}
 				if(!this.form.newPwd){
-					this.$api.msg('请输入密码')
+					this.$api.msg(this.i18n.toast.inputPwd)
 					return;
 				}
 				if(!isPayPassword(this.form.newPwd)){
-					this.$api.msg('支付密码必须为6位数字')
+					this.$api.msg(this.i18n.tradepwd.tip)
 					return;
 				}
 				if(!this.form.againPwd){
-					this.$api.msg('请输入密码')
+					this.$api.msg(this.i18n.toast.inputPwd)
 					return;
 				}
 				if(this.form.againPwd !== this.form.newPwd){
-					this.$api.msg('两次密码输入不一致')
+					this.$api.msg(this.i18n.toast.againPwdError)
 					return;
 				}
 				this.loading = true
-				this.form.authCode = this.authCode.token + ":" + this.authCode.captchaCode
-				console.log(this.form)
-				this.updatePayPwd(this.form).then(res => {
-					this.$api.msg('修改支付密码成功', 1000, false, 'none', function() {
+				this.updatePayPassword(this.form).then(res => {
+					this.$api.msg(this.i18n.toast.submitSuccess, 1000, false, 'none', function() {
 						setTimeout(function() {
 							this.logining = false
 							uni.navigateBack({})
@@ -175,6 +153,9 @@
 		.btn-disabled{
 			border: 0upx;
 			color: $font-color-disabled;
+		}
+		.code-btn{
+			font-size: $font-sm;
 		}
 	}
 	.tip{

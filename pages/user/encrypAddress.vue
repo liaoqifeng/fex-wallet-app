@@ -1,14 +1,14 @@
 <template>  
     <view class="container">  
-		<empty v-if="empty"></empty>
+		<u-empty :text="i18n.common.noData" :show="empty" mode="data" margin-top="60"></u-empty>
 		<view class="addr-item" v-for="(item, i) in list" :key="item.id">
 			<view class="t">
 				<text class="coin">{{item.coin}}<text class="name">{{item.remark}}</text></text>
-				<text class="del" @click="handleDelete(item.id, i)">删除</text>
+				<text class="del" @click="handleDelete(item.id, i)">{{i18n.common.delete}}</text>
 			</view>
-			<text>{{item.address}}</text>
+			<text class="addr">{{item.address}}</text>
 		</view>
-		<uni-load-more :status="loadingStatus"></uni-load-more>
+		<u-loadmore v-if="!empty" :load-text="loadText" :status="loadingStatus" :margin-top="30" :margin-bottom="20"/>
 		<mpvue-picker
 			:themeColor="themeColor"
 			ref="mpvuePicker"
@@ -26,15 +26,13 @@
     	mapActions
     } from 'vuex'
 	import mpvuePicker from '../../components/mpvuePicker.vue'
-	import empty from '../../components/empty.vue'
-	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
+	import {authMixin, commonMixin} from '@/common/mixin/mixin.js'
 	let startY = 0, moveY = 0, pageAtTop = true;
     export default {
 		components: {
-			mpvuePicker,
-			empty,
-			uniLoadMore
+			mpvuePicker
 		},
+		mixins: [authMixin, commonMixin],
 		data(){
 			return {
 				pickerValueArray: [],
@@ -45,7 +43,7 @@
 				empty: false,
 				list: [],
 				isLastPage: false,
-				loadingStatus: 'more',
+				loadingStatus: 'loadmore',
 				query: {
 					page: 1,
 					limit: 10,
@@ -60,6 +58,9 @@
 			}
 		},
 		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.my.payinaddress
+			})
 			this.list = []
 			this.getList()
 		},
@@ -89,9 +90,9 @@
 					this.empty = (res.total == 0)
 					this.isLastPage = (this.query.page == res.pages)
 					if(this.isLastPage){
-						this.loadingStatus = 'noMore'
+						this.loadingStatus = 'nomore'
 					} else {
-						this.loadingStatus = 'more'
+						this.loadingStatus = 'loadmore'
 					}
 					if(this.empty){
 						this.list = [];
@@ -99,18 +100,18 @@
 						this.list = this.list.concat(res.rows)
 					}
 				}).catch(error => {
-					this.loadingStatus = 'more'
+					this.loadingStatus = 'loadmore'
 				})
 			},
 			handleDelete(id, i){
 				let $this = this;
 				uni.showModal({
-				    title: '提示',
-				    content: '是否确认删除?',
+				    title: $this.i18n.common.tip,
+				    content: $this.i18n.popup.deletetext,
 				    success: function (res) {
 				        if (res.confirm) {
 				            $this.deleteEncryptBook(id).then(res =>{
-				            	$this.$api.msg('删除成功', 1000, false, 'none', function() {})
+				            	$this.$api.msg($this.i18n.toast.deleteSuccess, 1000, false, 'none', function() {})
 								$this.list.splice(i, 1)
 							})
 				        }
@@ -131,6 +132,7 @@
 			},
 			onConfirm(item){
 				this.query.coin = item.value[0]
+				this.list = []
 				this.getList()
 			}
         }  
@@ -143,7 +145,7 @@
 	}
 	.addr-item{
 		font-size: $font-base;
-		background: linear-gradient(right, #3783D9, #53A6EA);
+		background: linear-gradient(45deg, #3783D9, #53A6EA);
 		padding: 20upx 20upx;
 		margin: 10upx 0;
 		border-radius: 10upx;
@@ -159,6 +161,9 @@
 			.name{
 				margin-left: 20upx;
 			}
+		}
+		.addr{
+			font-size: 26upx;
 		}
 	}
 </style>

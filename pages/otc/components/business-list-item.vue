@@ -3,68 +3,21 @@
 		<view class="transfer-info">
 			<view class="w-title little-line">在线{{type==0?'购买':'出售'}}</view>
 			<view class="order-list">
-				<view class="order-item little-line">
-					<view class="row user-info">
-						<view class="name"><view class="profile">111</view>1币币</view>
-					</view>
-					<view class="row">
-						<view class="nomarl">数量 0.0111 BTC</view>
-						<view class="nomarl">单价</view>
-					</view>
-					<view class="row">
-						<view class="nomarl">限额￥10,000-￥55,877</view>
-						<view class="price">￥61,889344</view>
-					</view>
-					<view class="row opt">
-						<view class="pay">
-							<image src="../../../static/pay-alipay.png"></image>
-							<image src="../../../static/pay-wechat.png"></image>
-						</view>
-						<view>
-							<button class="btn buy" @click="buy" v-if="type==0">购买</button>
-							<button class="btn sell" @click="buy" v-if="type==1">出售</button>
-						</view>
-					</view>
+				<view v-for="(item, i) in list" :key="item.id">
+					<otc-list-item :data.sync="item"></otc-list-item>
 				</view>
 			</view>
 		</view>
-		<uni-popup ref="popup" type="bottom">
-			<view class="box">
-				<view class="coin">
-					<view>
-						<view class="name">{{type==0?'购买':'出售'}}BTC</view>
-						<view>单价:<text class="price">￥10000</text></view>
-					</view>
-					<view><image class="icon" src="https://s1.bqiapp.com/coin/20181030_72_webp/bitcoin_200_200.webp?v=67"></image></view>
-				</view>
-				<view class="type">
-					<view class="active">按金额{{type==0?'购买':'出售'}}</view>
-					<view>按数量{{type==0?'购买':'出售'}}</view>
-				</view>
-				<view class="input">
-					<view><input type="number" placeholder="请输入金额"/></view>
-					<view><text class="i cny">CNY</text> | <text class="i all">全部{{type==0?'买入':'售出'}}</text></view>
-				</view>
-				<view class="limit">限额：￥1000-￥10000</view>
-				<view class="num">交易数量：0.123 BTC</view>
-				<view class="amount">
-					<view class="t-p">实付款</view>
-					<view class="p">￥0.00</view>
-				</view>
-				<view class="btns">
-					<view class="btn cancel">取消</view>
-					<view class="btn submit">下单</view>
-				</view>
-			</view>
-		</uni-popup>
+		
 	</view>
 	
 </template> 
 
 <script>
 	import {uniPopup} from '@dcloudio/uni-ui'
+	import otcListItem from './../components/otc-list-item.vue'
 	export default {
-		components: {uniPopup},
+		components: {uniPopup, otcListItem},
 		data() {
 			return {
 				
@@ -79,6 +32,11 @@
 				type: Number,
 				default: 0
 			},
+			list: {
+				type: Array,
+				default: null
+			}
+			
 		},
 		onLoad(options){
 			/**

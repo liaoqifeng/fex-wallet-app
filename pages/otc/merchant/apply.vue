@@ -1,26 +1,26 @@
 <template>
 	<view class="container">
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input v-model="form.nickname" class="cell-input" placeholder="请输入商家名称"/>
+			<input v-model="form.nickname" class="cell-input" :placeholder="i18n.otc.merchant.inputName"/>
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input v-model="form.mobile" class="cell-input" placeholder="请输入手机号"/>
+			<input v-model="form.mobile" class="cell-input" :placeholder="i18n.otc.merchant.inputMobile"/>
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<input v-model="form.email" class="cell-input" placeholder="请输入邮箱地址"/>
+			<input v-model="form.email" class="cell-input" :placeholder="i18n.otc.merchant.inputEmail"/>
 		</view>
 		<view v-if="merchant.id != null" class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">状态</text>
+			<text class="cell-tit">{{i18n.common.status}}</text>
 			<text class="cell-more">{{status[merchant.status]}}</text>
 		</view>
 		<view class="list-cell" hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">保证金</text>
+			<text class="cell-tit">{{i18n.otc.merchant.margin}}</text>
 			<text class="cell-more">{{merchant.margin}} {{merchant.marginCoin}}</text>
 		</view>
 		<view class="safe-tip">
-			提示：保证金为冻结资产,在退出承兑商时退还
+			{{i18n.otc.merchant.tip1}}
 		</view>
-		<button :disabled="merchant.id != null && merchant.status != 1" class="submit" @click="submit">确认</button>
+		<button :disabled="merchant.id != null && merchant.status != 1" class="submit" @click="submit">{{i18n.common.ok}}</button>
 		
 		<uni-valid-popup ref="validPopup" @ok="ok"></uni-valid-popup>
 	</view>
@@ -32,10 +32,10 @@
 		mapActions
 	} from 'vuex'
 	import uniValidPopup from '@/components/uni-valid-popup.vue';
-	import {authMixin} from '@/common/mixin/mixin.js'
+	import {authMixin, commonMixin} from '@/common/mixin/mixin.js'
 	export default {
 		components: {uniValidPopup},
-		mixins: [authMixin],
+		mixins: [authMixin, commonMixin],
 		data() {
 			return {
 				merchant: {},
@@ -55,6 +55,18 @@
 				}
 			};
 		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.otc.merchant.apply
+			})
+			this.status = {
+					0: this.i18n.otc.merchant.status.peeding,
+					1: this.i18n.otc.merchant.status.pass,
+					2: this.i18n.otc.merchant.status.reject,
+					3: this.i18n.otc.merchant.status.exitAudit,
+					4: this.i18n.otc.merchant.status.exit
+				}
+		},
 		onLoad() {
 			this.getMerchant().then(res => {
 				this.merchant = res.data
@@ -68,28 +80,28 @@
 			...mapActions('otc', ['getMerchant', 'applyMerchant']),
 			submit(){
 				if(!this.form.nickname){
-					this.$api.msg('请输入商家名称')
+					this.$api.msg(this.i18n.otc.merchant.inputName)
 					return;
 				}
 				if(!this.form.mobile){
-					this.$api.msg('请输入手机号')
+					this.$api.msg(this.i18n.otc.merchant.inputMobile)
 					return;
 				}
 				if(!this.form.email){
-					this.$api.msg('请输入邮箱地址')
+					this.$api.msg(this.i18n.otc.merchant.inputEmail)
 					return;
 				}
 				this.$refs.validPopup.open('capitalPasswd')
 			},
 			ok(data){
 				if(!data.code){
-					this.$api.msg('请输入资金密码')
+					this.$api.msg(this.i18n.toast.inputCapthError)
 					return;
 				}
 				this.form.capitalPasswd = data.code
 				this.applyMerchant(this.form).then(res =>{
 					this.$refs.validPopup.close()
-					this.$api.msg('保存成功')
+					this.$api.msg(this.i18n.toast.submitSuccess)
 				}).catch(error => {
 					this.$refs.validPopup.enable()
 				})

@@ -1,19 +1,19 @@
 <template>
 	<view>
 		<view class="transfer-info">
-			<view class="w-title little-line">在线{{type==0?'购买':'出售'}}</view>
+			<view class="w-title little-line">{{type==0? i18n.otc.advert.onlineBuy: i18n.otc.advert.onlineSell}}</view>
 			<view class="order-list">
 				<empty v-if="list == null || list.length <= 0"></empty>
 				<view v-for="(item, index) in list" :key="item.id" class="order-item little-line">
 					<view class="row user-info">
-						<view class="name"><view class="profile">{{item.nickname | sub}}</view>{{item.coin}}</view>
+						<view class="name"><view class="profile">{{item.coin | sub}}</view>{{item.coin}}</view>
 					</view>
 					<view class="row">
-						<view class="nomarl">数量 {{item.volume - item.dealVolume}} BTC</view>
-						<view class="nomarl">单价</view>
+						<view class="nomarl">{{i18n.otc.vol}} {{item.volume - item.dealVolume}} {{item.coin}}</view>
+						<view class="nomarl">{{i18n.otc.price}}</view>
 					</view>
 					<view class="row">
-						<view class="nomarl">限额￥{{item.minTrade}}-￥{{item.maxTrade}}</view>
+						<view class="nomarl">{{i18n.otc.limit}}￥{{item.minTrade}}-￥{{item.maxTrade}}</view>
 						<view class="price">￥{{item.price}}</view>
 					</view>
 					<view class="row opt">
@@ -21,9 +21,9 @@
 							<image v-for="(t, index) in JSON.parse(item.payment)" :key="index" :src="t | formatIconUrl"></image>
 						</view>
 						<view class="btns">
-							<button v-if="item.status == 1" @click="pause(item, 0, index)" class="btn buy">开启</button>
-							<button v-if="item.status == 0" @click="pause(item, 1, index)" class="btn sell">暂停</button>
-							<button type="warn" class="btn" @click="close(item, index)">关闭</button>
+							<button v-if="item.status == 1" @click="pause(item, 0, index)" class="btn buy">{{i18n.common.open}}</button>
+							<button v-if="item.status == 0" @click="pause(item, 1, index)" class="btn sell">{{i18n.common.stop}}</button>
+							<button type="warn" class="btn" @click="close(item, index)">{{i18n.common.close}}</button>
 						</view>
 					</view>
 				</view>
@@ -40,8 +40,10 @@
 	} from 'vuex'
 	import {uniPopup} from '@dcloudio/uni-ui'
 	import empty from '../../../components/empty.vue'
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default {
 		components: {uniPopup, empty},
+		mixins: [commonMixin],
 		data() {
 			return {
 			};

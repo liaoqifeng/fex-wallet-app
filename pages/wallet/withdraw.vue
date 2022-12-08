@@ -4,73 +4,165 @@
 		<view class="coin-section m-t">
 			<view class="s-row">
 				<view class="col">
-					<image src="https://s1.bqiapp.com/coin/20181030_72_webp/bitcoin_200_200.webp?v=67" class="coinLogo"></image>
-					<text class="coin">BTC</text>
+					<image :src="coin.icon" mode="widthFix" class="icon"></image>
+					<text class="coin">{{coin.symbol}}</text>
 				</view>
-				<view class="col r light" @click="navToSearch()">
-					<text class="subtitle">选择币种</text>
+				<view class="col r light" @click="navTo('/pages/public/coinList')">
+					<text class="subtitle">{{i18n.withdraw.selectCoin}}</text>
 					<uni-icons type="forward" size="20" class="arrow"></uni-icons>
 				</view>
 			</view>
-			<view class="form">
-				<text class="label">提币地址</text>
-				<view class="input little-line">
-					<input type="number" placeholder="输入或长按粘贴地址" class="address"/>
-				</view>
-				<text class="label">数量</text>
-				<view class="input little-line">
-					<input type="number" placeholder="最小提币数量0.5" class="address"/>
-					<view class="all">全部</view>
-				</view>
-				<view class="balance">可用 0.001223423 ETH</view>
-				<text class="label">手续费</text>
-				<view class="input little-line">
-					<input type="number" placeholder="最小提币数量0.5" class="address"/>
+			<view class="chain" v-show="isChain">
+				<view class="label">{{i18n.withdraw.chainName}}</view>
+				<view class="row">
+					<view @click="selectChain(item)" class="item" :class="{'selected': item.tokenBase == chain.tokenBase}" v-for="(item, i) in config.chains">{{item.chain}}</view>
 				</view>
 			</view>
+			<view class="form">
+				<text class="label">{{i18n.withdraw.withdrawwAddr}}</text>
+				<view class="input little-line">
+					<input type="text" v-model="form.address" :placeholder="i18n.withdraw.inputAddr" class="address"/>
+				</view>
+				<text class="label">{{i18n.withdraw.vol}}</text>
+				<view class="input little-line">
+					<input type="number" v-model="form.amount" :placeholder="`${i18n.withdraw.minWithdrawVol}${config.minWithdraw}`" class="volume"/>
+					<view class="all" @click="all">{{i18n.withdraw.all}}</view>
+				</view>
+				<view class="balance">{{i18n.withdraw.avalible}} {{account.normalBalance | fixD(config.showPrecision)}} {{account.symbol}}</view>
+				<text class="label">{{i18n.withdraw.fee}} {{config.fee}} {{coin.symbol}}</text>
+			</view>
+			<button class="submit" @click="handleSubmit">{{i18n.common.ok}}</button>
 			<view class="desc">
-				<text>最小提币数量为：2 USDT (ERC20)。</text>
-				<text>为保障资金安全，当您账户安全策略变更、密码修改、我们会对提币进行人工审核，请耐心等待工作人员电话或邮件联系。</text>
-				<text>请务必确认电脑及浏览器安全，防止信息被篡改或泄露。</text>
+				{{i18n.withdraw.tip1}}：{{config.minWithdraw}} {{coin.symbol}} <span v-if="isChain">({{chain.chain}})</span>。<br/>
+				{{i18n.withdraw.tip2}}。<br/>
+				{{i18n.withdraw.tip3}}。
 			</view>
 		</view>
+		<uni-valid-popup ref="validPopup" @ok="ok"></uni-valid-popup>
 	</view>
 </template>
 
 <script>
-	import {
-		mapState
-	} from 'vuex';
+	import { mapState, mapActions } from 'vuex'
+	import uniValidPopup from '@/components/uni-valid-popup.vue';
 	import {uniIcons} from '@dcloudio/uni-ui'
+	import {commonMixin, authMixin} from '@/common/mixin/mixin.js'
 	export default {
-		components: {uniIcons},
+		components: {uniIcons, uniValidPopup},
+		mixins: [commonMixin, authMixin],
 		data() {
 			return {
-				total: 0, //总价格
-				allChecked: false, //全选状态  true|false
-				empty: false, //空白页现实  true|false
-				cartList: [],
+				coin: {},
+				account: {},
+				coins: [],
+				tips: {},
+				config: {},
+				chain: {},
+				isChain: false,
+				form: {
+					symbol: undefined,
+					amount: undefined,
+					address: undefined,
+					authCode: ''
+				}
 			};
 		},
-		onLoad(){
-			this.loadData();
+		onNavigationBarButtonTap(e) {
+			this.navTo(`/pages/wallet/detail?coin=${this.coin.symbol}&filterIndex=0`);
 		},
-		computed:{
-			...mapState(['hasLogin'])
+		onUnload(){
+			uni.$off('selectCoin', this.selectCoin)
+		},
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.wallet.withdraw
+			})
+		},
+		onLoad(){
+			uni.$on('selectCoin', this.selectCoin)
+			this.coinList().then(res =>{
+				this.coins = res.data
+				this.coin = res.data[0]
+				
+				this.loadData()
+			})
 		},
 		methods: {
+			...mapActions('common', ['coinList', 'coinTips']),
+			...mapActions('account', ['getAccount']),
+			...mapActions('user', ['withdraw', 'withdrawConfig']),
 			//请求数据
 			async loadData(){
-				let list = await this.$api.json('cartList'); 
-				let cartList = list.map(item=>{
-					item.checked = true;
-					return item;
-				});
-			},
-			navToSearch(){
-				uni.navigateTo({
-					url: '/pages/wallet/search'
+				
+				this.coinTips(this.coin.symbol).then(res =>{
+					this.tips = res.data
 				})
+				this.withdrawConfig(this.coin.symbol).then(res =>{
+					this.config = res.data
+					this.isChain = (this.config.chains && this.config.chains.length > 0)
+					if(this.isChain){
+						this.chain = this.config.chains[0]
+					}
+					
+					this.getAccount(this.coin.symbol).then(res =>{
+						this.account = res.data
+					})
+				})
+			},
+			selectChain(item){
+				this.chain = item
+				this.config.fee = item.withdrawFee
+				this.config.minWithdraw = item.minWithdraw
+				this.form.address = undefined
+				this.form.amount = undefined
+			},
+			selectCoin(data){
+				for(let i = 0; i < this.coins.length; i++){
+					let item = this.coins[i]
+					if(item.symbol === data.coin.item.name){
+						this.coin = item;
+						break;
+					}
+				}
+				this.loadData()
+			},
+			handleSubmit(){
+				this.form.symbol = this.coin.symbol
+				if(!this.form.symbol){
+					this.$api.msg(this.i18n.withdraw.selectCoin)
+					return;
+				}
+				if(!this.form.address){
+					this.$api.msg(this.i18n.withdraw.inputAddr)
+					return;
+				}
+				if(!this.form.amount){
+					this.$api.msg(this.i18n.withdraw.inputAmount)
+					return;
+				}
+				this.$refs.validPopup.open('capitalPasswd')
+				
+			},
+			ok(data){
+				if(!data.code){
+					this.$api.msg(this.i18n.toast.inputCapthError)
+					return;
+				}
+				
+				this.form.capitalPasswd = data.code
+				uni.showLoading();
+				this.form.chain = this.chain.tokenBase ? this.chain.tokenBase : ''
+				this.withdraw(this.form).then(res =>{
+					uni.hideLoading()
+					this.$refs.validPopup.close()
+					this.$api.msg(this.i18n.toast.withdrawSuccess, 1000, false, 'none', function() {})
+				}).catch(error => {
+					uni.hideLoading()
+					this.$refs.validPopup.enable()
+				})
+			},
+			all(){
+				this.form.amount = this.account.normalBalance
 			}
 		}
 	}
@@ -78,19 +170,49 @@
 
 <style lang='scss' scoped>
 	.container{
-		padding: 20upx 20upx;
+		padding: $page-row-spacing;
 	}
 	.coin-section{
 		background: #fff;
+		.chain{
+			padding: 30upx 0upx 10upx 0upx;
+		}
+		.chain .label{
+			font-size: $font-sm;
+		}
+		.chain .row{
+			display: flex;
+			padding-top: 20upx;
+			.item{
+				width: 160upx;
+				height: 70upx;
+				line-height: 70upx;
+				background-color: $uni-color-subbg;
+				border-radius: 10upx;
+				margin-right: 20upx;
+				text-align: center;
+			}
+			.selected{
+				border: 1upx solid #007AFF;
+				background-color: #ffffff;
+				color: #007AFF;
+			}
+		}
 		.s-row{
 			background-color: $uni-color-subbg;
 			display:flex;
 			align-items:center;
-			padding: 20upx 20upx 20upx 30upx;
+			padding: 20upx 10upx 20upx 10upx;
 			.col{
 				font-size: $font-lg;
 				color: $font-color-dark;
 				flex:1;
+				.icon{
+					width: 60upx;
+					height: 60upx;
+					vertical-align: middle;
+					margin-right: 10upx;
+				}
 				.coin{
 					font-weight: 400;
 					vertical-align: middle;
@@ -134,6 +256,12 @@
 				color: $font-color-light;
 				font-size: $font-sm;
 			}
+			.address{
+				width: 100%;
+			}
+			.volume{
+				width: 400upx;
+			}
 			.input{
 				padding: 10upx 0;
 				display: flex;
@@ -161,6 +289,11 @@
 			flex-direction: column;
 		}
 	}
-	
+	.submit{
+		margin: 60upx 0upx;
+		background: $uni-color-blue;
+		color: #fff;
+		font-size: $font-md;
+	}
 	
 </style>

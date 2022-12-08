@@ -2,10 +2,10 @@
 	<view class="container">
 		<view class="line"></view>
 		<!-- 列表 -->
-		<advert-list-item title="在线出售" :list.sync="advert.buys" :payments.sync="payments" :type="0"></advert-list-item>
+		<advert-list-item :title="i18n.otc.advert.onlineSell" :list.sync="advert.buys" :payments.sync="payments" :type="0"></advert-list-item>
 		<view class="line"></view>
 		<!-- 列表 -->
-		<advert-list-item title="在线购买" :list.sync="advert.sells" :payments.sync="payments" :type="1"></advert-list-item>
+		<advert-list-item :title="i18n.otc.advert.onlineBuy" :list.sync="advert.sells" :payments.sync="payments" :type="1"></advert-list-item>
 	</view>
 </template>
 
@@ -33,6 +33,9 @@
 			};
 		},
 		onShow(){
+			uni.setNavigationBarTitle({
+				title: this.i18n.otc.advert.advertList
+			})
 			this.loadData();
 		},
 		methods: {

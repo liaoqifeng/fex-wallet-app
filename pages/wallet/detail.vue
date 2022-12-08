@@ -5,19 +5,19 @@
 			<view class="block">
 				<view class="s-row">
 					<view class="col">
-						<image src="https://s1.bqiapp.com/coin/20181030_72_webp/bitcoin_200_200.webp?v=67" class="coinLogo"></image>
-						<text class="coin">BTC</text>
+						<image :src="account.icon" class="coinLogo"></image>
+						<text class="coin">{{account.symbol}}</text>
 					</view>
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-title">可用</view>
-					<view class="col subtitle row-title">冻结</view>
-					<view class="col r subtitle row-title">折合(CNY)</view>
+					<view class="col subtitle row-title">{{i18n.wallet.avalible}}</view>
+					<view class="col subtitle row-title">{{i18n.wallet.frozen}}</view>
+					<view class="col r subtitle row-title">{{i18n.wallet.amount}}(CNY)</view>
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-amount">0.025334</view>
-					<view class="col subtitle row-amount">0.025334</view>
-					<view class="col r subtitle row-amount">100.00</view>
+					<view class="col subtitle row-amount">{{account.normalBalance | fixD(account.showPrecision)}}</view>
+					<view class="col subtitle row-amount">{{account.frozenBalance | fixD(account.showPrecision)}}</view>
+					<view class="col r subtitle row-amount">{{account.priceCny | fixD(2)}}</view>
 				</view>
 			</view>
 		</view>
@@ -28,20 +28,22 @@
 				<view class="block">
 					<view class="s-row">
 						<view class="col">
-							<text class="coin">提币</text>
+							<text class="coin">{{filters[filterIndex]}}</text>
 						</view>
 					</view>
-					<view class="s-row">
-						<view class="col subtitle row-title">数量</view>
-						<view class="col subtitle row-title">状态</view>
-						<view class="col r subtitle row-title">时间</view>
+					<view class="s-row s-title">
+						<view class="col subtitle row-title">{{i18n.common.vol}}</view>
+						<view class="col subtitle row-title">{{i18n.common.status}}</view>
+						<view class="col r subtitle row-title">{{i18n.common.time}}</view>
 					</view>
 					<scroll-view class="s-list" :enableBackToTop="enableBackToTop" :scroll-y="scrollY" @scrolltolower="loadMore">
-						<view class="s-row little-line" v-for="item in records" :key="item">
-							<view class="col subtitle row-amount">0.025334</view>
-							<view class="col subtitle row-amount">已完成</view>
-							<view class="col r subtitle row-amount">16:52 01/04</view>
+						<u-empty :text="i18n.common.noData" :show="empty" mode="data" margin-top="10"></u-empty>
+						<view class="s-row little-line" v-for="(item, i) in records" :key="item.id">
+							<view class="col subtitle row-amount">{{item.amount | fixD(account.showPrecision)}}</view>
+							<view class="col subtitle row-amount">{{currentStatusMap[item.status]}}</view>
+							<view class="col r subtitle row-amount">{{item.ctime | moment('HH:mm MM/DD')}}</view>
 						</view>
+						<u-loadmore v-if="!empty" :load-text="loadText" :status="loadingStatus" :margin-top="30" :margin-bottom="20"/>
 					</scroll-view>
 				</view>
 			</view>
@@ -52,72 +54,165 @@
 
 <script>
 	import {
-		mapState
-	} from 'vuex';
+		mapState,
+		mapActions
+	} from 'vuex'
 	import {uniIcons} from '@dcloudio/uni-ui'
 	import empty from '../../components/empty.vue'
+	import {authMixin, commonMixin} from '@/common/mixin/mixin.js'
 	export default {
 		components: {uniIcons, empty},
+		mixins: [ authMixin, commonMixin],
 		data() {
 			return {
+				coin: undefined,
+				account: {},
 				total: 0, //总价格
 				empty: false, //空白页现实  true|false
+				query: {
+					page: 1,
+					limit: 10,
+					symbol: undefined
+				},
+				records: [],
+				loadingStatus: 'loadmore',
+				isLastPage: false,
 				scrollY: true,
 				enableBackToTop: true,
-				records: [1,2,3,4,5,6,7,8,9,0,10,11,12,13,14,15,16,17,18,19]
+				filters: ['提币', '充币'],
+				filterIndex: 0,
+				currentStatusMap: {},
+				withdrawStatusMap: {
+					0: '未审核',
+					1: '审核通过',
+					2: '转账中',
+					3: '转账失败',
+					4: '已完成',
+					5: '审核拒绝', 
+					6: '已撤销'
+				},
+				depositStatusMap: {
+					0: '未确认',
+					1: '已完成',
+					2: '异常'
+				}
 			};
 		},
-		onLoad(){
-			console.log("====================================")
-			uni.showToast({
-			    title: '标题',
-			    duration: 2000
-			});
-			this.loadData();
+		onShow() {
+			uni.setNavigationBarTitle({
+				title: this.i18n.withdraw.detail
+			})
+			this.withdrawStatusMap = {
+				0: this.i18n.withdraw.status.no,
+				1: this.i18n.withdraw.status.pass,
+				2: this.i18n.withdraw.status.transfer,
+				3: this.i18n.withdraw.status.fail,
+				4: this.i18n.withdraw.status.complete,
+				5: this.i18n.withdraw.status.reject, 
+				6: this.i18n.withdraw.status.cancel
+			}
+			this.depositStatusMap = {
+				0: this.i18n.recharge.status.noConfirm,
+				1: this.i18n.recharge.status.complete,
+				2: this.i18n.recharge.status.exception
+			}
+			this.filters = [this.i18n.wallet.withdraw, this.i18n.wallet.recharge]
+		},
+		onLoad(options){
+			this.coin = options.coin
+			this.query.symbol = options.coin
+			this.filterIndex = options.filterIndex ? options.filterIndex : 0
+			this.loadData()
+			this.initStatuMap()
+			this.records = []
+			this.loadRecords()
 		},
 		onHide() {
 			
 		},
 		onNavigationBarButtonTap(e) {
-			console.log("-------------------------------------")
 			uni.showActionSheet({
-				title:'全部',
-			    itemList: ['充值', '提现', '兑换'],
+				title: this.i18n.withdraw.all,
+			    itemList: filters,
 			    success: function (res) {
-			        console.log('选中了第' + (res.tapIndex + 1) + '个按钮');
+					this.filterIndex = res.tapIndex
+					this.loadingStatus = 'loadmore'
+					this.isLastPage =false
+			        this.initStatuMap()
+			        this.records = []
+			        this.loadRecords()
 			    },
 			    fail: function (res) {
-			        console.log(res.errMsg);
+			        
 			    }
 			});
 		},
 		watch:{
-			//显示空白页
-			list(e){
-				let empty = e.length === 0 ? true: false;
-				if(this.empty !== empty){
-					this.empty = empty;
-				}
-			}
-		},
-		computed:{
-			...mapState(['hasLogin'])
 		},
 		methods: {
-			showAction(){
-				
-			},
+			...mapActions('account', ['getAccount']),
+			...mapActions('user', ['withdrawList', 'depositList']),
 			//请求数据
 			async loadData(){
-				/* let list = await this.$api.json('cartList'); 
-				let cartList = list.map(item=>{
-					item.checked = true;
-					return item;
-				}); */
+				this.getAccount(this.coin).then(res =>{
+					this.account = res.data
+				}).catch(error =>{
+					
+				})
 			},
-			navToLogin(){
-				uni.navigateTo({
-					url: '/pages/public/login'
+			initStatuMap(){
+				if(this.filterIndex == 0){
+					this.currentStatusMap = this.withdrawStatusMap
+				} else if(this.filterIndex == 1){
+					this.currentStatusMap = this.depositStatusMap
+				}
+			},
+			loadMore(){
+				if(!this.isLastPage && this.loadingStatus != 'loading'){
+					this.loadingStatus = 'loading'
+					this.query.page += 1
+					this.loadRecords()
+				}
+			},
+			async loadRecords(){
+				this.loadWithdraw()
+			},
+			loadDeposit(){
+				this.depositList(this.query).then(res =>{
+					this.empty = res.total <= 0
+					this.isLastPage = (this.query.page == res.pages)
+					if(this.isLastPage){
+						this.loadingStatus = 'nomore'
+					} else {
+						this.loadingStatus = 'loadmore'
+					}
+					if(this.empty){
+						this.records = [];
+					} else {
+						this.records = this.records.concat(res.rows)
+					}
+				}).catch(error =>{
+					
+				})
+			},
+			loadWithdraw(){
+				this.withdrawList(this.query).then(res =>{
+					this.empty = res.total <= 0
+					this.isLastPage = (this.query.page == res.pages)
+					
+					console.log(this.query.page, res.pages)
+					if(this.isLastPage){
+						this.loadingStatus = 'nomore'
+					} else {
+						this.loadingStatus = 'loadmore'
+					}
+					if(this.empty){
+						this.records = [];
+					} else {
+						this.records = this.records.concat(res.rows)
+					}
+				}).catch(error =>{
+					
 				})
 			}
 		}
@@ -135,7 +230,7 @@
 			.s-list{
 				position: absolute;
 				width: 100%;
-				top: 480upx;
+				top: 500upx;
 				bottom: 0upx;
 			}
 			.s-row{

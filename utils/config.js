@@ -1,8 +1,9 @@
+import G from './global.js'
 //  http 请求配置项
 export default {
     //  填自己的开发者服务器接口地址 
-    url: "http://47.107.100.112",
-	//url: "http://192.168.1.6:8083",
+    //url: "http://47.107.100.112",
+	url: G.REQUEST_URL,
     //  请求的参数   
     data: {},
     //  设置请求的 header，header 中不能设置 Referer。

@@ -2,33 +2,33 @@
 	<view class="container">
 		<view class="base-wrapper">
 			<view class="b">
-				<view class="profile">币</view>
+				<view class="profile">{{merchant.nickname | sub}}</view>
 				<view class="nr">
-					<text class="name">币币1</text>
-					<text class="datetime">注册时间 2019-12-10</text>
+					<text class="name">{{merchant.nickname}}</text>
+					<text class="datetime">注册时间 {{merchant.ctime | moment('YYYY-MM-DD HH:mm:ss')}}</text>
 				</view>
 			</view>
 			<view class="t">
 				<view class="item">
 					<text class="label">交易次数</text>
-					<text class="value">1073次</text>
+					<text class="value">{{indicator.turnoverCount}}次</text>
 				</view>
 				<view class="item">
 					<text class="label">信用度</text>
-					<text class="value">100%</text>
+					<text class="value">{{indicator.creditGrade}}%</text>
 				</view>
 				<view class="item">
 					<text class="label">总申诉</text>
-					<text class="value">1次</text>
+					<text class="value">{{indicator.complainCount}}次</text>
 				</view>
 			</view>
 		</view>
 		<view class="line"></view>
 		<!-- 列表 -->
-		<business-list-item title="在线出售" type="0"></business-list-item>
+		<business-list-item title="在线出售" :type="0" :list.sync="buyAdverts"></business-list-item>
 		<view class="line"></view>
 		<!-- 列表 -->
-		<business-list-item title="在线购买" type="1"></business-list-item>
+		<business-list-item title="在线购买" :type="1" :list.sync="sellAdverts"></business-list-item>
 	
 	</view>
 	
@@ -36,49 +36,48 @@
 
 <script>
 	import {
-		mapState
-	} from 'vuex';
+		mapState,
+		mapActions
+	} from 'vuex'
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	import businessListItem from "../components/business-list-item.vue";
 	export default {
 		components: {businessListItem},
+		mixins: [ commonMixin],
 		data() {
 			return {
-				total: 0, //总价格
-				allChecked: false, //全选状态  true|false
-				empty: false, //空白页现实  true|false
-				cartList: [],
+				merchantId: undefined,
+				merchant: {},
+				indicator: {},
+				buyAdverts: [],
+				sellAdverts: []
 			};
 		},
-		onLoad(){
+		filters:{
+			sub(v){
+				if(v){
+					return v.substring(0, 1);
+				}
+				return '';
+			},
+			formatIconUrl(v){
+				return `../../static/${v}.png`
+			}
+		},
+		onLoad(options){
+			console.log("options", options)
+			this.merchantId = options.merchantId
 			this.loadData();
 		},
-		computed:{
-			...mapState(['hasLogin'])
-		},
 		methods: {
-			change(){
-				uni.showActionSheet({
-					title:'支付方式',
-				    itemList: ['银行卡', '微信', '支付宝'],
-				    success: function (res) {
-				        console.log('选中了第' + (res.tapIndex + 1) + '个按钮');
-				    },
-				    fail: function (res) {
-				        console.log(res.errMsg);
-				    }
-				});
-			},
+			...mapActions('otc', ['merchantDetail']),
 			//请求数据
 			async loadData(){
-				let list = await this.$api.json('cartList'); 
-				let cartList = list.map(item=>{
-					item.checked = true;
-					return item;
-				});
-			},
-			navTo(url){
-				uni.navigateTo({
-					url: url
+				this.merchantDetail(this.merchantId).then(res =>{
+					this.merchant = res.data.merchant
+					this.buyAdverts = res.data.buys
+					this.sellAdverts = res.data.sells
+					this.indicator = res.data.indicator
 				})
 			}
 		}
