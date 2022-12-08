@@ -19,8 +19,8 @@
 #### 技术交流社区
 
 ##### 微信群 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ群
-![Image text](doc/wechat_qrcode.jpg) 
-![Image text](doc/qq_qrcode.jpg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/wechat_qrcode.jpg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/qq_qrcode.jpg) 
 
 
 #### 功能规划
@@ -83,7 +83,7 @@
 
 
 #### 推荐作者小程序
-![Image text](doc/appbox.jpg) 
+![Image text](https://miniboxs.oss-cn-shenzhen.aliyuncs.com/wallet/appbox.jpg) 
 ![Image text](https://shkj1994.oss-cn-shenzhen.aliyuncs.com/gh_1c63fd731ccc_430.jpg) 
 ![Image text](https://shkj1994.oss-cn-shenzhen.aliyuncs.com/gh_a79c05053be4_430.jpg) 
 ![Image text](https://shkj1994.oss-cn-shenzhen.aliyuncs.com/gh_4264e951ad60_430.jpg) 
