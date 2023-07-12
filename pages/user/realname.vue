@@ -1,11 +1,6 @@
 <template>
 	<view class="container">
-		<!-- <view class="header">
-			<text class="title">实名认证</text>
-			<text class="sub">为确保账户安全请先完成实名认证</text>
-		</view> -->
 		<view class="box">
-			<image src="../../static/images/auth/icon-zheng.png" class="icon" mode="widthFix"></image>
 			<view class="title">
 				<text class="t">{{i18n.audit.tip1}}</text>
 				<text class="b">{{i18n.audit.tip2}}；</text>
@@ -114,7 +109,7 @@
 		height: 100%;
 		background: url(../../static/images/auth/auth-bg.jpg);
 		background-size: 100% 100%;
-		padding: 80upx 30upx 30upx 30upx;
+		padding: 0upx 30upx 30upx 30upx;
 		overflow: auto;
 	}
 	.header{

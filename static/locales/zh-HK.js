@@ -6,7 +6,107 @@ module.exports = {
 			me: '我的',
 			news: '資訊',
 			wallet: '錢包',
-			market: '行情'
+			market: '行情',
+			trade: '交易'
+		},
+		simpleearn: {
+			dhbt: "簡單賺幣",
+			ts1: "高效、省時、省力",
+			zbjj: "什麼是簡單賺幣?",
+			qbcp: "全部產品",
+			sscp: "蒐索",
+			tabs: [{name: "全部"}, {name: "活期"},{name: "定期"}],
+			bz: "幣種",
+			cknh: "參攷年化",
+			qx: "期限",
+			sgsl: "申購數量",
+			kyye: "可用餘額",
+			sykt: "剩餘可投",
+			yglx: "預估利息",
+			gz: "規則",
+			xy1: "我已閱讀並同意",
+			xy2: "簡單賺幣使用者協定",
+			sg: "申購",
+			zxsg: "{0}起投",
+			zd: "最大",
+			cplx: {
+				0: "活期",
+				1: "定期"
+			},
+			xz: "現在",
+			sgsj: "申購時間",
+			qxsj: "起息時間",
+			jssj: "到期時間",
+			wddd: "我的訂單",
+			ddzt: {
+				0: "進行中",
+				1: "已完成",
+				2: "已贖回"
+			},
+			zsy: "總收益",
+			sh: "贖回",
+			sfqrsh: "是否確認贖回?",
+			shcg: "贖回成功",
+			mrsxf: "買入手續費",
+			shsxf: "贖回手續費",
+			qrfe: "確認份額",
+			about: {
+				bt: "关于簡單賺幣",
+				cpgl: "產品概覽",
+				syly: "收益來源",
+				cpjs1: "什麼是簡單賺幣?",
+				cpjs2: "簡單賺幣是歐易打造的一款幫助有空閒數字資產用戶進行低門檻賺幣的產品，入門簡單。簡單賺幣有不同期限可選，活期簡單賺幣即對應餘幣寶，通過在藉貸市場出借給槓桿交易用戶獲取收益:定期簡單賺幣通過鎖定幣種獲取 PoS 收益或項目方獎勵。請注意:歷史收益不能代表未來收益。我們不承諾在一定期限內以貨幣、實物、股權等方式還本付息或者給付任何其他形式的財產性收益回報。",
+				cpjs3: "產品優勢",
+				cpjs4: "安全可靠",
+				cpjs5: "平台擁有嚴格的風控體系、領先的安全措施和先進的基礎設施，能夠充分保障用戶資產安全。",
+				cpjs6: "靈活申贖",
+				cpjs7: "24 小時支持隨時申購和贖回，活期簡單賺幣贖回立即到賬，定期簡單賺幣贖回 30 分鐘內到賬。",
+				cpjs8: "活期簡單賺幣",
+				cpjs9: "活期簡單賺幣即餘幣寶，通過在藉貸市場出借給槓桿交易用戶獲取收益。",
+				cpjs10: "定期簡單賺幣",
+				cpjs11: "定期簡單賺幣有多種收益來源，例如通過質押獲得基於權益證明(POS)機制獲得的獎勵以及平台獎勵。"
+			}
+		},
+		option: {
+			title: "期權",
+			position: "持倉",
+			name: "名稱",
+			side: "方向",
+			price: "現價",
+			zd: '今日漲跌',
+			zt: "狀態",
+			xzdqsj: "選擇到期時間",
+			second: "秒",
+			mrsl: "買入數量",
+			srmrsl: "請輸入買入數量",
+			kyye: "可用餘額",
+			sideMap: {
+				'bull': '買漲',
+				'bear': '買跌'
+			},
+			tips: {
+				zxsl: "最小買入數量{0}",
+				zdsl: "最大買入數量{0}",
+				xdcg: "下單成功"
+			},
+			order: {
+				title: "訂單記錄",
+				status: {
+					0: "交易中",
+					1: "已平倉",
+					2: "異常"
+				},
+				jyd: "交易對",
+				xzfx: "下注方向",
+				xzsl: "下注數量",
+				xzzq: "下注週期",
+				pl: "賠率",
+				kcjg: "開倉價格",
+				pcjg: "平倉價格",
+				sxf: "手續費",
+				sysl: "收益數量",
+				jgsj: "交割時間"
+			}
 		},
 		login: {
 			inputAccount: '請輸入帳號',
@@ -388,7 +488,7 @@ module.exports = {
 			
 		},
 		about: {
-			protocol: '服務協定',
+			service: '服務協定',
 			privacy: '隱私條款',
 			law: '法律聲明',
 			checkVer: '檢查新版本',
@@ -534,6 +634,17 @@ module.exports = {
 			submit: '下單',
 			confirm: '是否確認下單?',
 			order: {
+				orderAppeal: "訂單申訴",
+				submitAppeal: "提交申訴",
+				cancelAppeal: "取消申訴",
+				searchAppeal: "查看審訴詳情",
+				appealStatus: {
+					"0": "未處理",
+					"1": "已處理",
+					"2": "已取消",
+				},
+				inputContent: "請輸入投訴內容",
+				uploadImage: "請上傳圖片",
 				orderRecord: '訂單記錄',
 				statusLabel: '訂單狀態',
 				typeLabel: '交易類型',
@@ -608,7 +719,10 @@ module.exports = {
 				selectOvertime: '請選擇超時時間',
 				onlineSell: '線上出售',
 				onlineBuy: '線上購買',
-				advertList: '廣告清單'
+				advertList: '廣告清單',
+				confirmCannel: '確定關閉廣告?',
+				cancelSuccess: '關閉廣告成功',
+				cancelFail: '關閉廣告失敗'
 			},
 			merchant: {
 				title: '承兌商管理',
@@ -810,6 +924,8 @@ module.exports = {
 			inputAccount: '請輸入賬號',
 			inputBank: '請輸入開戶銀行',
 			inputSubBank: '請輸入開戶支行',
+			optSuccess: '操作成功',
+			optFail: '操作失敗'
 		},
 		popup: {
 			open: '暫未開放！',

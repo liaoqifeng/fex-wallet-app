@@ -239,3 +239,25 @@ export function getOrder(id) {
     method: 'GET'
   })
 }
+//订单申诉
+export function appealOrder(data) {
+  return request({
+    url: `/v1/otc/order/appeal`,
+    method: 'POST',
+	data: data
+  })
+}
+//获取申诉详情
+export function getAppealDetail(orderId) {
+  return request({
+    url: `/v1/otc/order/appeal/${orderId}`,
+    method: 'GET'
+  })
+}
+//取消订单申诉
+export function appealOrderCancel(orderId) {
+  return request({
+    url: `/v1/otc/order/appeal/cancel/${orderId}`,
+    method: 'POST'
+  })
+}

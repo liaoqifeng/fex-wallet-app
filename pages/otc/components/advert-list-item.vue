@@ -13,12 +13,14 @@
 						<view class="nomarl">{{i18n.otc.price}}</view>
 					</view>
 					<view class="row">
-						<view class="nomarl">{{i18n.otc.limit}}￥{{item.minTrade}}-￥{{item.maxTrade}}</view>
-						<view class="price">￥{{item.price}}</view>
+						<view class="nomarl">{{i18n.otc.limit}}{{currencys[item.paycoin]}}{{item.minTrade}}-{{currencys[item.paycoin]}}{{item.maxTrade}}</view>
+						<view class="price">{{currencys[item.paycoin]}}{{item.price}}</view>
 					</view>
 					<view class="row opt">
 						<view class="pay">
-							<image v-for="(t, index) in JSON.parse(item.payment)" :key="index" :src="t | formatIconUrl"></image>
+							<view class="item" v-for="(t, index) in JSON.parse(item.payment)" :key="index">
+								<text class="icon" :style="{backgroundColor: payments[t]}"></text>{{i18n.payment.method[t]}}
+							</view>
 						</view>
 						<view class="btns">
 							<button v-if="item.status == 1" @click="pause(item, 0, index)" class="btn buy">{{i18n.common.open}}</button>
@@ -73,8 +75,12 @@
 				default: null
 			},
 			payments: {
-				type: Array,
-				default: null
+				type: Object,
+				default: {}
+			},
+			currencys: {
+				type: Object,
+				default: {}
 			}
 		},
 		methods: {
@@ -82,18 +88,18 @@
 			close(item, index){
 				let $this = this
 				uni.showModal({
-				    title: '提示',
-				    content: '确定关闭广告?',
+				    title: this.i18n.popup.tips,
+				    content: this.i18n.otc.advert.confirmCannel,
 				    success: function (res) {
 				        if (res.confirm) {
-							uni.showLoading({ title: '处理中...' });
+							uni.showLoading({ title: this.i18n.common.request});
 							$this.closeAdvert(item.id).then(res =>{
 								uni.hideLoading()
 								$this.list.splice(index, 1)
-								this.$api.msg('关闭广告成功')
+								this.$api.msg(this.i18n.otc.advert.cancelSuccess)
 							}).catch(error =>{
 								uni.hideLoading()
-								this.$api.msg('关闭广告失败')
+								this.$api.msg(this.i18n.otc.advert.cancelFail)
 							})
 				        } else if (res.cancel) {
 				        }
@@ -103,15 +109,15 @@
 			},
 			pause(item, status, index){
 				let $this = this
-				let tip = status == 0 ? '开启' : '暂停'
-				uni.showLoading({ title: '处理中...' });
+				let tip = status == 0 ? this.i18n.common.open : this.i18n.common.stop
+				uni.showLoading({ title: this.i18n.common.request });
 				$this.pauseAdvert(item.id).then(res =>{
 					uni.hideLoading()
 					$this.list[index].status = status
-					this.$api.msg(tip + '广告成功')
+					this.$api.msg($this.i18n.toast.optSuccess)
 				}).catch(error =>{
 					uni.hideLoading()
-					this.$api.msg(tip + '广告失败')
+					this.$api.msg($this.i18n.toast.optFail)
 				})
 				
 			}
@@ -179,6 +185,19 @@
 						image{
 							width: 25px;
 							height: 25px;
+						}
+						.item{
+							float: left;
+							margin-right: 10rpx;
+							font-size: $font-sm;
+							display: flex;
+							align-items: center;
+						}
+						.icon{
+							display: block;
+							height: 24rpx;
+							width: 6rpx;
+							margin-right: 6rpx;
 						}
 					}
 					.buy{

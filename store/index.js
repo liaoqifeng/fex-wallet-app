@@ -13,52 +13,33 @@ import finance from './modules/finance'
 import lottery from './modules/lottery'
 import prediction from './modules/prediction'
 import mining from './modules/mining'
+import option from './modules/option'
+import tio from './modules/tio'
+
+const context = require.context('./modules', false, /\.js$/);
+const moduleStores = {};
+
+context.keys().forEach(key => {
+    // 获取读取到的文件名字并且截取
+    const fileName = key.slice(2, -3);
+	if(fileName == 'websocket' || fileName == 'tio'){
+		return;
+	}
+    //通过 context(key)导出文件内容
+    const fileModule = context(key).default;
+    moduleStores[fileName] = {
+		namespaced: true,
+        ...fileModule,
+    };
+});
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
 	websocket: websocket,
-	user: {
-	  namespaced: true,
-	  ...user
-	},
-	otc: {
-	  namespaced: true,
-	  ...otc
-	},
-	common: {
-	  namespaced: true,
-	  ...common
-	},
-	exchange: {
-	  namespaced: true,
-	  ...exchange
-	},
-	account: {
-	  namespaced: true,
-	  ...account
-	},
-	cms: {
-	  namespaced: true,
-	  ...cms
-	},
-	finance: {
-	  namespaced: true,
-	  ...finance
-	},
-	lottery: {
-	  namespaced: true,
-	  ...lottery
-	},
-	prediction: {
-	  namespaced: true,
-	  ...prediction
-	},
-	mining: {
-	  namespaced: true,
-	  ...mining
-	}
+	tio: tio,
+	...moduleStores
   }
 })
 

@@ -38,12 +38,17 @@
 								<view class="nomarl">{{i18n.otc.price}}</view>
 							</view>
 							<view class="row">
-								<view class="nomarl">{{i18n.otc.limit}}￥{{item.minTrade}}-￥{{item.maxTrade}}</view>
-								<view class="price">￥{{item.price}}</view>
+								<view class="nomarl">{{i18n.otc.limit}}{{currencysMap[item.paycoin]}}{{item.minTrade}}-{{currencysMap[item.paycoin]}}{{item.maxTrade}}</view>
+								<view class="price">{{currencysMap[item.paycoin]}}{{item.price}}</view>
 							</view>
 							<view class="row opt">
 								<view class="pay">
-									<i v-for="(t, index) in JSON.parse(item.payment)" :key="index" :class="`fexfont icon-${t}`"></i>
+									<view class="pay">
+										<view class="item" v-for="(t, index) in JSON.parse(item.payment)" :key="index">
+											<text class="icon" :style="{backgroundColor: paymentsMap[t]}"></text>{{i18n.payment.method[t]}}
+										</view>
+									</view>
+								
 								</view>
 								<view>
 									<button class="btn buy" v-if="item.side == 'BUY'" @click="create(item)">{{i18n.otc.buy}}</button>
@@ -60,9 +65,9 @@
 				<view class="coin">
 					<view>
 						<view class="name">{{sideMap[ad.side]}}{{ad.coin}}</view>
-						<view>{{i18n.otc.price}}:<text class="price">￥{{ad.price}}</text></view>
+						<view>{{i18n.otc.price}}:<text class="price">{{currencysMap[ad.paycoin]}}{{ad.price}}</text></view>
 					</view>
-					<view><image class="icon" :src="coinMap[ad.coin].icon"></image></view>
+					<!-- <view><image class="icon" :src="coinMap[ad.coin].icon"></image></view> -->
 				</view>
 				<view class="type">
 					<view @click="changeType(0)" :class="form.type == 0 ? 'active' : ''">{{i18n.otc.byAmount}}{{sideMap[ad.side]}}</view>
@@ -70,13 +75,13 @@
 				</view>
 				<view class="input">
 					<view><input @blur="blur" @focus="focus" class="uni-input" cursor-spacing="0" :adjust-position="false" v-model="form.volume" type="number" :placeholder="placeholder[form.type]"/></view>
-					<view><text class="i cny">{{unit[form.type]}}</text> | <text @click="allBuy" class="i all">{{i18n.otc.all}}{{sideMap[ad.side]}}</text></view>
+					<view><!-- <text class="i cny">{{ad.paycoin}}</text> --> | <text @click="allBuy" class="i all">{{i18n.otc.all}}{{sideMap[ad.side]}}</text></view>
 				</view>
-				<view class="limit">{{i18n.otc.limit}}：￥{{ad.minTrade}} - ￥{{ad.maxTrade}}</view>
+				<view class="limit">{{i18n.otc.limit}}：{{currencysMap[ad.paycoin]}}{{ad.minTrade}} - {{currencysMap[ad.paycoin]}}{{ad.maxTrade}}</view>
 				<view class="num">{{i18n.otc.tradeVol}}：{{showVolume}} {{ad.coin}}</view>
 				<view class="amount">
 					<view class="t-p">{{i18n.otc.payAmount}}</view>
-					<view class="p">￥{{showAmount}}</view>
+					<view class="p">{{currencysMap[ad.paycoin]}}{{showAmount}}</view>
 				</view>
 				<view class="btns">
 					<view @click="cancel" class="btn cancel">{{i18n.common.cancel}}</view>
@@ -101,6 +106,9 @@
 				sideIndex: 0,
 				coinIndex: 0,
 				fiatCoins: [],
+				currencys: [],
+				currencysMap: {},
+				paymentsMap: {},
 				page:{
 					page: 1,
 					limit: 10,
@@ -165,6 +173,7 @@
 				'BUY': this.i18n.otc.buy,
 				'SELL': this.i18n.otc.sell
 			}
+			this.loadConfig()
 			this.$fire.$emit('refreshCoin')
 		},
 		onUnload() {
@@ -175,18 +184,39 @@
 				if(!v){
 					return
 				}
+				console.log(this.coinMap)
 				if(this.form.type == 0){
 					this.showVolume = (this.form.volume / this.ad.price).toFixed(this.coinMap[this.ad.coin].showPrecision)
 					this.showAmount = this.form.volume
 				} else {
+					
 					this.showVolume = parseFloat(this.form.volume).toFixed(this.coinMap[this.ad.coin].showPrecision)
 					this.showAmount = parseFloat(this.form.volume) * this.ad.price
 				}
 			}
 		},
 		methods: {
-			...mapActions('common', ['fiatList']),
-			...mapActions('otc', ['advertList', 'createOrder']),
+			...mapActions('common', ['fiatList', 'currencyList']),
+			...mapActions('otc', ['advertList', 'createOrder', 'getPaymentSetting']),
+			loadConfig(){
+				this.currencyList().then(res => {
+					let currencyList = res.data.currency
+					let map = {}
+					for(let i = 0; i < currencyList.length; i++){
+						map[currencyList[i].code] = currencyList[i].symbol
+					}
+					this.currencysMap = map
+					this.currencys = currencyList
+				})
+				this.getPaymentSetting().then(res => {
+					let paymentSettingList = res.data
+					let map = {}
+					for(let i = 0; i < paymentSettingList.length; i++){
+						map[paymentSettingList[i].symbol] = paymentSettingList[i].color
+					}
+					this.paymentsMap = map
+				})
+			},
 			//顶部tab点击
 			sideTabClick(side, index){
 				this.sideIndex = index
@@ -260,6 +290,9 @@
 			},
 			cancel(){
 				this.showModal = false
+				this.form.volume = 0
+				this.showVolume = 0
+				this.showAmount = 0
 			},
 			submit(){
 				let $this = this
@@ -415,6 +448,19 @@
 				image{
 					width: 25px;
 					height: 25px;
+				}
+				.item{
+					float: left;
+					margin-right: 10rpx;
+					font-size: $font-sm;
+					display: flex;
+					align-items: center;
+				}
+				.icon{
+					display: block;
+					height: 24rpx;
+					width: 6rpx;
+					margin-right: 6rpx;
 				}
 			}
 			.buy{

@@ -3,6 +3,7 @@ import store from './store'
 import App from './App'
 import global from './utils/global'
 import {fixD, formatD} from './utils/utils'
+import ws from './utils/ws.js'
 import Json from './Json' //测试用数据
 
 // #ifdef H5
@@ -134,6 +135,7 @@ Vue.prototype.$api = {msg, json, prePage, navTo};
 Vue.prototype.$g = global;
 Vue.prototype.$upload = upload;
 Vue.prototype.$fixD = fixD;
+Vue.prototype.$ws = ws
 
 Vue.filter('fixD', function (value, precision) {
   if (!value) {

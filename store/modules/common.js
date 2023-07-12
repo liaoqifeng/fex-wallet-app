@@ -10,7 +10,8 @@ import {
 	currencyList,
 	fiatList,
 	getAppVersion,
-	getConfig
+	getConfig,
+	getHelpList
 } from '@/api/common'
 import {
 	COMMON_COIN_LIST,
@@ -171,6 +172,17 @@ const common = {
 			return new Promise((resolve, reject) => {
 				getConfig().then(res => {
 					commit(COMMON_CONFIG_LIST, res)
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getHelpList({
+			commit
+		}) {
+			return new Promise((resolve, reject) => {
+				getHelpList().then(res => {
 					resolve(res)
 				}).catch(error => {
 					reject(error)

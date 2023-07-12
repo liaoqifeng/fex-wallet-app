@@ -54,12 +54,12 @@
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ]
             },
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false
+            },
             /* ios打包配置 */
             "sdkConfigs" : {
-                "ad" : {
-                    "gdt" : {}
-                }
+                "ad" : {}
             },
             "icons" : {
                 "android" : {

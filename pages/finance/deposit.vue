@@ -3,7 +3,7 @@
 		<view class="total-box">
 			<view class="title">{{i18n.financial.totalProfit}}</view>
 			<view class="asset">
-				<view><text class="cny">{{profit}}</text>CNY</view>
+				<view><text class="cny">{{profit}}</text>USD</view>
 			</view>
 			<view class="operat">
 				<view class="col" @click="navTo('/pages/finance/historyOrder')">

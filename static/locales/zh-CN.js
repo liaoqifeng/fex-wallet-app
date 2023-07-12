@@ -6,7 +6,107 @@ module.exports = {
 			me: '我的',
 			news: '资讯',
 			wallet: '钱包',
-			market: '行情'
+			market: '行情',
+			trade: '交易'
+		},
+		simpleearn: {
+			dhbt: "简单赚币",
+			ts1: "高效、省时、省力",
+			zbjj: "什么是简单赚币?",
+			qbcp: "全部产品",
+			sscp: "搜索",
+			tabs: [{name: "全部"}, {name: "活期"},{name: "定期"}],
+			bz: "币种",
+			cknh: "参考年化",
+			qx: "期限",
+			sgsl: "申购数量",
+			kyye: "可用余额",
+			sykt: "剩余可投",
+			yglx: "预估利息",
+			gz: "规则",
+			xy1: "我已阅读并同意",
+			xy2: "简单赚币用户协议",
+			sg: "申购",
+			zxsg: "{0}起投",
+			zd: "最大",
+			cplx: {
+				0: "活期",
+				1: "定期"
+			},
+			xz: "现在",
+			sgsj: "申购时间",
+			qxsj: "起息时间",
+			jssj: "到期时间",
+			wddd: "我的订单",
+			ddzt: {
+				0: "进行中",
+				1: "已完成",
+				2: "已赎回"
+			},
+			zsy: "总收益",
+			sh: "赎回",
+			sfqrsh: "是否确认赎回?",
+			shcg: "赎回成功",
+			mrsxf: "买入手续费",
+			shsxf: "赎回手续费",
+			qrfe: "确认份额",
+			about: {
+				bt: "关于简单赚币",
+				cpgl: "产品概览",
+				syly: "收益来源",
+				cpjs1: "什么是简单赚币?",
+				cpjs2: "简单赚币是欧易打造的一款帮助有空闲数字资产用户进行低门槛赚币的产品，入门简单。简单赚币有不同期限可选，活期简单赚币即对应余币宝，通过在借贷市场出借给杠杆交易用户获取收益:定期简单赚币通过锁定币种获取 PoS 收益或项目方奖励。请注意:历史收益不能代表未来收益。我们不承诺在一定期限内以货币、实物、股权等方式还本付息或者给付任何其他形式的财产性收益回报。",
+				cpjs3: "产品优势",
+				cpjs4: "安全可靠",
+				cpjs5: "平台拥有严格的风控体系、领先的安全措施和先进的基础设施，能够充分保障用户资产安全。",
+				cpjs6: "灵活申赎",
+				cpjs7: "24 小时支持随时申购和赎回，活期简单赚币赎回立即到账，定期简单赚币赎回 30 分钟内到账。",
+				cpjs8: "活期简单赚币",
+				cpjs9: "活期简单赚币即余币宝，通过在借贷市场出借给杠杆交易用户获取收益。",
+				cpjs10: "定期简单赚币",
+				cpjs11: "定期简单赚币有多种收益来源，例如通过质押获得基于权益证明(POS)机制获得的奖励以及平台奖励。"
+			}
+		},
+		option: {
+			title: "期权",
+			position: "持仓",
+			name: "名称",
+			side: "方向",
+			price: "现价",
+			zd: '今日涨跌',
+			zt: "状态",
+			xzdqsj: "选择到期时间",
+			second: "秒",
+			mrsl: "买入数量",
+			srmrsl: "请输入买入数量",
+			kyye: "可用余额",
+			sideMap: {
+				'bull': '买涨',
+				'bear': '买跌'
+			},
+			tips: {
+				zxsl: "最小买入数量{0}",
+				zdsl: "最大买入数量{0}",
+				xdcg: "下单成功"
+			},
+			order: {
+				title: "订单记录",
+				status: {
+					0: "交易中",
+					1: "已平仓",
+					2: "异常"
+				},
+				jyd: "交易对",
+				xzfx: "下注方向",
+				xzsl: "下注数量",
+				xzzq: "下注周期",
+				pl: "赔率",
+				kcjg: "开仓价格",
+				pcjg: "平仓价格",
+				sxf: "手续费",
+				sysl: "收益数量",
+				jgsj: "交割时间"
+			}
 		},
 		login: {
 			inputAccount: '请输入帐号',
@@ -388,7 +488,7 @@ module.exports = {
 			tip10: '如何提币',
 		},
 		about: {
-			protocol: '服务协议',
+			service: '服务协议',
 			privacy: '隐私条款',
 			law: '法律声明',
 			checkVer: '检查新版本',
@@ -397,7 +497,7 @@ module.exports = {
 		set: {
 			push: '消息推送',
 			help: '帮助中心',
-			about: '关于Fex'
+			about: '关于我们'
 		},
 		agent: {
 			status: {
@@ -534,6 +634,17 @@ module.exports = {
 			submit: '下单',
 			confirm: '是否确认下单?',
 			order: {
+				orderAppeal: "订单申诉",
+				submitAppeal: "提交申诉",
+				cancelAppeal: "取消申诉",
+				searchAppeal: "查看审诉详情",
+				appealStatus: {
+					"0": "未处理",
+					"1": "已处理",
+					"2": "已取消",
+				},
+				inputContent: "请输入投诉内容",
+				uploadImage: "请上传图片",
 				orderRecord: '订单记录',
 				statusLabel: '订单状态',
 				typeLabel: '交易类型',
@@ -608,7 +719,10 @@ module.exports = {
 				selectOvertime: '请选择超时时间',
 				onlineSell: '在线出售',
 				onlineBuy: '在线购买',
-				advertList: '广告列表'
+				advertList: '广告列表',
+				confirmCannel: '确定关闭广告?',
+				cancelSuccess: '关闭广告成功',
+				cancelFail: '关闭广告失败'
 			},
 			merchant: {
 				title: '承兑商管理',
@@ -810,6 +924,8 @@ module.exports = {
 			inputAccount: '请输入账号',
 			inputBank: '请输入开户银行',
 			inputSubBank: '请输入开户支行',
+			optSuccess: '操作成功',
+			optFail: '操作失败'
 		},
 		popup: {
 			open: '暂未开放!',

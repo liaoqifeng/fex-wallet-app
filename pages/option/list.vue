@@ -1,101 +1,105 @@
 <template>
 	<view class="container">
+		<u-sticky>
+			<!-- 只能有一个根元素 -->
+			<view class="sticky">
+				<u-subsection :list="subsectionData" :current="current" @change="sectionChange"></u-subsection>
+			</view>
+		</u-sticky>
 		<!-- 列表 -->
 		<view class="coin-section m-t">
 			<u-empty :text="i18n.common.noData" :show="empty" mode="data" margin-top="200"></u-empty>
-			<view v-for="(item, i) in list" :key="`row${item.id}`" class="block little-line" @click="navTo(`/pages/otc/order/detail?id=${item.id}`, true)">
+			<view v-for="(item, i) in list" :key="`row${item.id}`" class="block little-line">
 				<view class="s-row">
-					<view class="col">
-						<text class="coin" :class="item.side | formatSideClass(item)">{{item.side | formatSide(item, i18n.otc.buy, i18n.otc.sell)}}</text>
-						<text class="coin">{{item.coin}}</text>
-					</view>
-					<view class="col r light">
-						<text class="status">{{statusMap[item.status]}}</text>
-						<uni-icons type="forward" size="20" class="gt"></uni-icons>
-					</view>
+					<view class="col subtitle row-title">{{i18n.option.order.jyd}}</view>
+					<view class="col subtitle row-title">{{i18n.option.order.xzfx}}</view>
+					<view class="col r subtitle row-title">{{i18n.option.zt}}</view>
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-title">{{i18n.common.time}}</view>
-					<view class="col subtitle row-title">{{i18n.common.vol}}({{item.coin}})</view>
-					<view class="col r subtitle row-title">{{i18n.common.amount}}({{item.paycoin}})</view>
+					<view class="col subtitle row-amount">{{item.symbol}}</view>
+					<view class="col subtitle row-amount" :class="{upText: (item.side == 'bull'), downText: (item.side == 'bear')}">{{sideMap[item.side]}}</view>
+					<view class="col r subtitle row-amount">{{statusMap[item.status]}}</view>
+					
 				</view>
 				<view class="s-row">
-					<view class="col subtitle row-amount">{{item.ctime | moment('HH:mm MM/DD')}}</view>
-					<view class="col subtitle row-amount">{{item.volume}}</view>
-					<view class="col r subtitle row-amount">{{item.totalPrice}}</view>
+					<view class="col subtitle row-title">{{i18n.option.order.xzsl}}({{item.betCoin}})</view>
+					<view class="col subtitle row-title">{{i18n.option.order.xzzq}}</view>
+					<view class="col r subtitle row-title">{{i18n.option.order.pl}}</view>
+				</view>
+				<view class="s-row">
+					<view class="col subtitle row-amount">{{item.amount}}</view>
+					<view class="col subtitle row-amount">{{item.odds * 100 | fixed(2)}}%</view>
+					<view class="col r subtitle row-amount">{{item.period}}</view>
+				</view>
+				<view class="s-row">
+					<view class="col subtitle row-title">{{i18n.option.order.kcjg}}({{item.pricingCoin}})</view>
+					<view class="col subtitle row-title">{{i18n.option.order.pcjg}}({{item.pricingCoin}})</view>
+					<view class="col r subtitle row-title">{{i18n.option.order.sxf}}({{item.betCoin}})</view>
+				</view>
+				<view class="s-row">
+					<view class="col subtitle row-amount">{{item.beginPrice}}</view>
+					<view class="col subtitle row-amount">{{item.endPrice}}</view>
+					<view class="col r subtitle row-amount">{{item.fee}}</view>
+				</view>
+				<view class="s-row">
+					<view class="col subtitle row-title">{{i18n.option.order.sysl}}({{item.betCoin}})</view>
+					<view class="col r subtitle row-title">{{i18n.option.order.jgsj}}</view>
+				</view>
+				<view class="s-row">
+					<view class="col subtitle row-amount">{{item.profitAmount}}</view>
+					<view class="col r subtitle row-amount">{{item.expireTime | moment('HH:mm:ss YYYY/MM/DD')}}</view>
 				</view>
 			</view>
 			<u-loadmore v-if="!empty" :load-text="loadText" :status="loadingStatus" :margin-top="30"/>
 			
 		</view>
 		
-		<uni-popup ref="popup" type="top">
-			<view class="filter-wrapper">
-				<view class="filter">
-					<view class="filter-title">{{i18n.otc.order.typeLabel}}</view>
-					<view class="filter-pay">
-						<text @click="filter('BUY', undefined)" class="filter-pay-item" :class="{'filter-active': query.side == 'BUY'}">{{i18n.otc.buy}}</text>
-						<text @click="filter('SELL', undefined)" class="filter-pay-item" :class="{'filter-active': query.side == 'SELL'}">{{i18n.otc.sell}}</text>
-						<text class="placeholder"></text>
-					</view>
-					<view class="filter-title">{{i18n.otc.order.statusLabel}}</view>
-					<view class="filter-pay">
-						<text class="filter-pay-item" v-for="(v, k) in statusMap" :key="k" @click="filter(undefined, k)" :class="{'filter-active': query.status == k}" >{{v}}</text>
-					</view>
-				</view>
-				
-				<view class="btn-wrapper">
-					<view class="btn" @click="reset">{{i18n.common.reset}}</view>
-					<view class="btn submit" @click="search">{{i18n.common.filter}}</view>
-				</view>
-			</view>
-		</uni-popup>
 	</view>
 </template>
 
 <script>
 	import { mapState, mapActions } from 'vuex'
-	import {uniPopup, uniIcons} from '@dcloudio/uni-ui'
-	import {commonMixin, authMixin} from '@/common/mixin/mixin.js'
+	import {commonMixin} from '@/common/mixin/mixin.js'
 	export default {
-		components: {uniPopup, uniIcons},
-		mixins: [commonMixin, authMixin],
+		mixins: [commonMixin],
 		data() {
 			return {
 				query: {
 					page: 1,
 					limit: 10,
-					side: undefined,
-					status: undefined
+					status: 0
 				},
 				empty: false,
 				list: [],
 				isLastPage: false,
 				loadingStatus: 'loadmore',
 				statusMap: {
-					0: '待支付',
-					1: '已支付',
-					2: '交易成功',
-					3: '取消',
-					4: '申诉',
-					5: '申诉完成',
-					6: '异常订单'
-				}
+					0: '进行中',
+					1: '已平仓',
+					2: '异常'
+				},
+				sideMap: {
+					'bull': '买涨',
+					'bear': '买跌'
+				},
+				subsectionData: [
+					{name: '交易中'}, 
+					{name: '已平仓'}
+				],
+				current: 0
 			};
 		},
 		onShow(){
 			uni.setNavigationBarTitle({
-				title: this.i18n.otc.order.orderRecord
+				title: this.i18n.option.order.title
 			})
-			this.statusMap = {
-				0: this.i18n.otc.order.status.pedding,
-				1: this.i18n.otc.order.status.payed,
-				2: this.i18n.otc.order.status.success,
-				3: this.i18n.otc.order.status.cancel,
-				4: this.i18n.otc.order.status.appeal,
-				5: this.i18n.otc.order.status.appealDone,
-				6: this.i18n.otc.order.status.except
-			}
+			this.sideMap = this.i18n.option.sideMap
+			this.statusMap = this.i18n.option.order.status
+			this.subsectionData = [
+				{name: this.i18n.option.order.status[0]}, 
+				{name: this.i18n.option.order.status[1]}
+			]
+			
 			this.list = []
 			this.query.page = 1
 			this.loadingStatus = 'loadmore'
@@ -133,32 +137,25 @@
 			}
 		},
 		onNavigationBarButtonTap(e) {
-			this.$refs.popup.open()
 		},
 		methods: {
-			...mapActions('otc', ['orderList']),
-			filter(side, status){
-				if(side){
-					this.query.side = side
-				}
-				if(status){
-					this.query.status = status
-				}
-			},
+			...mapActions('option', ['optionOrderList']),
 			reset(){
 				this.query.status = undefined
-				this.query.side = undefined
+			},
+			sectionChange(index){
+				this.query.status = index
+				this.search()
 			},
 			search(){
 				this.query.page = 1
 				this.list = []
 				this.loadingStatus = 'loadmore'
 				this.loadData()
-				this.$refs.popup.close();
 			},
 			async loadData(){
 				this.loadingStatus = 'loading'
-				this.orderList(this.query).then(res =>{
+				this.optionOrderList(this.query).then(res =>{
 					uni.stopPullDownRefresh();
 					this.empty = (res.total == 0)
 					this.isLastPage = (this.query.page == res.pages)
@@ -181,8 +178,16 @@
 </script>
 
 <style lang='scss' scoped>
+	$upColor: rgb(37,175,142);
+	$downColor: rgb(210,73,99);
 	.container{
 		padding: 0upx 0upx;
+	}
+	.upText{
+		color: $upColor !important;
+	}
+	.downText{
+		color: $downColor !important;
 	}
 	.filter-wrapper{
 		background-color: #ffffff;
@@ -292,7 +297,7 @@
 					text-align: right;
 				}
 				.row-title{
-					font-size: $font-base;
+					font-size: 24rpx;
 					font-weight: normal;
 					color: $font-color-light;
 				}

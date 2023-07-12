@@ -19,6 +19,88 @@
 				"enablePullDownRefresh": true
 			}
 		},{
+			"path": "pages/earn/simple/index",
+			"style": {
+				"navigationBarTitleText": "简单赚币",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+								"fontSrc": "/static/font/fexfont.ttf",
+								"text": "\ue605",
+								"fontSize": "20",
+								"color": "#000000",
+								"width": "30px",
+								"background": "rgba(0,0,0,0)"
+							}
+						]
+					}
+				}
+			}
+		},{
+			"path": "pages/earn/simple/detail",
+			"style": {
+				"navigationBarTitleText": "简单赚币",
+				"app-plus": {
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+								"fontSrc": "/static/font/fexfont.ttf",
+								"text": "\ue605",
+								"fontSize": "20",
+								"color": "#000000",
+								"width": "30px",
+								"background": "rgba(0,0,0,0)"
+							}
+						]
+					}
+				}
+			}
+		},{
+			"path": "pages/earn/simple/order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"enablePullDownRefresh": true
+			}
+		},{
+			"path": "pages/earn/simple/about",
+			"style": {
+				"navigationBarTitleText": "关于简单赚币"
+			}
+		},{
+			"path": "pages/option/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+				
+			}
+		},{
+			"path": "pages/option/list",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},{
+			"path": "pages/option/market",
+			"style": {
+				"navigationBarTitleText": "",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},{
+			"path": "pages/option/kline",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},{
 			"path": "pages/lottery/index",
 			"style": {
 				"navigationBarTitleText": "抽奖",
@@ -147,6 +229,15 @@
 			}
 		},
 		{
+			"path": "pages/prediction/kline",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#101725",
+				"navigationBarTextStyle": "white",
+				"app-plus" : {}
+			}
+		},
+		{
 			"path": "pages/otc/otc",
 			"style": {
 				"navigationBarTitleText": "法币交易",
@@ -210,6 +301,12 @@
 						"type": "transparent"
 					}
 				}
+			}
+		},
+		{
+			"path": "pages/otc/order/appeal",
+			"style": {
+				"navigationBarTitleText": "订单申诉"
 			}
 		},
 		{
@@ -390,7 +487,13 @@
 		{
 			"path": "pages/set/about",
 			"style": {
-				"navigationBarTitleText": "关于Fex"
+				"navigationBarTitleText": "关于我们"
+			}
+		},
+		{
+			"path": "pages/set/aboutDetail",
+			"style": {
+				"navigationBarTitleText": ""
 			}
 		},
 		{
@@ -661,10 +764,10 @@
 				"text": "行情"
 			},
 			{
-				"pagePath": "pages/news/news",
-				"iconPath": "static/images/tabbar/tab-news.png",
-				"selectedIconPath": "static/images/tabbar/tab-news-active.png",
-				"text": "资讯"
+				"pagePath": "pages/option/market",
+				"iconPath": "static/images/tabbar/tab-mining.png",
+				"selectedIconPath": "static/images/tabbar/tab-mining-active.png",
+				"text": "期权"
 			},
 			{
 				"pagePath": "pages/mining/index",

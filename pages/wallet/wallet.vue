@@ -1,9 +1,9 @@
 <template>
 	<view class="container">
-		<u-navbar :is-back="false" height="20">
+		<!-- <u-navbar :is-back="false" height="20">
 			<view class="slot-wrap">
 			</view>
-		</u-navbar>
+		</u-navbar> -->
 		<view class="total-box">
 			<view class="title">{{i18n.wallet.total}}(USDT)</view>
 			<view class="asset">
@@ -31,12 +31,12 @@
 				<view class="s-row">
 					<view class="col subtitle row-title">{{i18n.wallet.avalible}}</view>
 					<view class="col subtitle row-title">{{i18n.wallet.frozen}}</view>
-					<view class="col r subtitle row-title">{{i18n.wallet.amount}}(CNY)</view>
+					<view class="col r subtitle row-title">{{i18n.wallet.amount}}(USD)</view>
 				</view>
 				<view class="s-row">
 					<view class="col subtitle row-amount">{{item.normalBalance | fixed(item.showPrecision)}}</view>
 					<view class="col subtitle row-amount">{{item.frozenBalance | fixed(item.showPrecision)}}</view>
-					<view class="col r subtitle row-amount">{{item.priceCny | fixed(2)}}</view>
+					<view class="col r subtitle row-amount">{{item.priceUsd | fixed(2)}}</view>
 				</view>
 			</view>
 			
@@ -92,7 +92,7 @@
 
 <style lang='scss' scoped>
 	.container{
-		padding: 0upx 20upx;
+		padding: 50rpx 20rpx 120rpx 20rpx;
 	}
 	.slot-wrap{
 		padding: 20upx 20upx 0 20upx;

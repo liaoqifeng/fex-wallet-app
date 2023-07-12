@@ -59,6 +59,17 @@ export const commonMixin = {
 		  	return true
 		  }
 	  },
+	  i18nParse(v, params){
+		  if(params && params.length > 0){
+			  for(let i = 0; i < params.length; i++){
+				  v = v.replaceAll('{'+i+'}', params[i])
+			  }
+		  }
+		  return v
+	  },
+	  onBack(){
+	  	uni.navigateBack()
+	  },
 	  navTo(url, auth){
 		  if(auth && !this.loginInfo.hasLogin){
 			  uni.navigateTo({
@@ -88,3 +99,16 @@ export const authMixin = {
   }
 }
 
+export const coinMixin = {
+  computed: {
+  	...mapState('common', ['coinMap'])
+  },
+  onShow() {
+	  this.$fire.$emit('refreshCoin')
+  },
+  methods: {
+	  parseCoinIcoin(coin){
+		  return this.coinMap[coin] ? this.coinMap[coin].icon : ''
+	  }
+  }
+}

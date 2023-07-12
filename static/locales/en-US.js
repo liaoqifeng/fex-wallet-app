@@ -6,7 +6,107 @@ module.exports = {
 			me: 'Me',
 			news: 'News',
 			wallet: 'Wallet',
-			market: 'Market'
+			market: 'Market',
+			trade: 'Trade'
+		},
+		simpleearn: {
+			dhbt: "Simple Earn",
+			ts1: "Efficient, time-saving and labor-saving",
+			zbjj: "What is Simple Earn?",
+			qbcp: "All products",
+			sscp: "Search",
+			tabs: [{name: "ALL"}, {name: "Flexible"},{name: "Fixed"}],
+			bz: "Coin",
+			cknh: "Reference annualized",
+			qx: "The term",
+			sgsl: "Subscription quantity",
+			kyye: "Available Balance",
+			sykt: "Remaining to cast",
+			yglx: "Estimated interest",
+			gz: "Rule",
+			xy1: "I have read and agree",
+			xy2: "Simple Earn Coin User Agreement",
+			sg: "Purchase",
+			zxsg: "Min {0}",
+			zd: "Max",
+			cplx: {
+				0: "Flexible",
+				1: "Fixed"
+			},
+			xz: "Now",
+			sgsj: "Subscription time",
+			qxsj: "Starting time",
+			jssj: "Expire date",
+			wddd: "My Order",
+			ddzt: {
+				0: "In progress",
+				1: "Completed",
+				2: "Redeemed"
+			},
+			zsy: "Total revenue",
+			sh: "Redeem",
+			sfqrsh: "Whether to confirm redemption?",
+			shcg: "successful redemption",
+			mrsxf: "Buying fee",
+			shsxf: "Redemption fee",
+			qrfe: "Confirm share",
+			about: {
+				bt: "About Simple Earn",
+				cpgl: "Product Overview",
+				syly: "Source of income",
+				cpjs1: "What is Simple Earn?",
+				cpjs2: "Simple earning coins is a product created by Ouyi to help users with free digital assets to earn coins with a low threshold. It is easy to get started. There are different deadlines for simple earning coins. Lend to leveraged trading users in the lending market to obtain income: regular and simple earning coins to obtain PoS income or project party rewards by locking the currency. Please note: historical income cannot represent future income. We do not promise to use currency, physical objects, and equity within a certain period of time. repay the principal and interest or pay any other form of property return.",
+				cpjs3: "Product Advantage",
+				cpjs4: "Safe and reliable",
+				cpjs5: "The platform has a strict risk control system, leading security measures and advanced infrastructure, which can fully protect the security of user assets.",
+				cpjs6: "Flexible redemption",
+				cpjs7: "Subscription and redemption are supported at any time within 24 hours. The redemption of current simple earning currency will be credited immediately, and the regular simple earning currency redemption will be credited within 30 minutes.",
+				cpjs8: "Easy to earn coins at current accounts",
+				cpjs9: "Yubibao is a simple way to earn coins at current deposits, and obtain income by lending to margin trading users in the lending market.",
+				cpjs10: "Regularly simple earn coins",
+				cpjs11: "There are multiple sources of income for simple and regular earning, such as rewards based on the proof-of-stake (POS) mechanism through staking and platform rewards."
+			}
+		},
+		option: {
+			title: "Options",
+			position: "Position",
+			name: "Name",
+			side: "Direction",
+			price: "Price",
+			zd: 'Chg',
+			zt: "Status",
+			xzdqsj: "Choose an expiration time",
+			second: "s",
+			mrsl: "Quantity",
+			srmrsl: "Please enter the purchase quantity",
+			kyye: "Available Balance",
+			sideMap: {
+				'bull': 'Rise',
+				'bear': 'Fall'
+			},
+			tips: {
+				zxsl: "Minimum buy quantity {0}",
+				zdsl: "Maximum Buy Quantity {0}",
+				xdcg: "successfully ordered"
+			},
+			order: {
+				title: "Order record",
+				status: {
+					0: "Ing",
+					1: "Closed",
+					2: "Abnormal"
+				},
+				jyd: "Pair",
+				xzfx: "Direction",
+				xzsl: "Amount",
+				xzzq: "Period",
+				pl: "Odds",
+				kcjg: "Opening price",
+				pcjg: "Closing price",
+				sxf: "Fee",
+				sysl: "Income",
+				jgsj: "Delivery time"
+			}
 		},
 		login: {
 			inputAccount: 'Please enter your account',
@@ -394,7 +494,7 @@ module.exports = {
 			tip10: 'How to withdraw',
 		},
 		about: {
-			protocol: 'Service agreement',
+			service: 'Service agreement',
 			privacy: 'Privacy clause',
 			law: 'Legal declaration',
 			checkVer: 'Check for new version',
@@ -540,6 +640,17 @@ module.exports = {
 			submit: 'Confirm',
 			confirm: 'Confirm order?',
 			order: {
+				orderAppeal: "Order appeal",
+				submitAppeal: "Submission of complaints",
+				cancelAppeal: "Cancel appeal",
+				searchAppeal: "Details of trial",
+				appealStatus: {
+					"0": "Not processed",
+					"1": "Processed",
+					"2": "Canceled",
+				},
+				inputContent: "Please enter the complaint content",
+				uploadImage: "Please upload pictures",
 				orderRecord: 'Record',
 				statusLabel: 'Status',
 				typeLabel: 'Type',
@@ -614,7 +725,10 @@ module.exports = {
 				selectOvertime: 'Please select a timeout',
 				onlineSell: 'Online Sell',
 				onlineBuy: 'Online Buy',
-				advertList: 'Advertising list'
+				advertList: 'Advertising list',
+				confirmCannel: 'Confirm to close the advertisement?',
+				cancelSuccess: 'Close advertisement successfully',
+				cancelFail: 'Failed to close advertisement'
 			},
 			merchant: {
 				title: 'Acceptor management',
@@ -814,6 +928,8 @@ module.exports = {
 			inputAccount: 'Please input Username',
 			inputBank: 'Please enter the account bank',
 			inputSubBank: 'Please enter the account opening branch',
+			optSuccess: 'Operation succeeded',
+			optFail: 'Operation failed'
 		},
 		popup: {
 			open: 'Not yet open!',

@@ -40,13 +40,13 @@
 				<list-cell image="/static/images/my/icon-safe.png" iconColor="#e07472" @eventClick="navTo('/pages/user/safe', true)" :title="i18n.my.accountsafe"></list-cell>
 				<list-cell image="/static/images/my/icon-auth.png" iconColor="#4eb432" @eventClick="navTo('/pages/user/realname', true)" :tips="authStatusMap[authStatus]" :title="i18n.my.auth"></list-cell>
 				<list-cell image="/static/images/my/icon-addr.png" iconColor="#4eb432" @eventClick="navTo('/pages/user/encrypAddress', true)" :title="i18n.my.addressBook"></list-cell>
-				<list-cell image="/static/images/my/icon-payin.png" iconColor="#4eb432" @eventClick="navTo('/pages/user/payType', true)" :title="i18n.my.payin"></list-cell>
+				<list-cell image="/static/images/my/icon-payin.png" iconColor="#4eb432" @eventClick="navTo('/pages/user/payment/method', true)" :title="i18n.my.payin"></list-cell>
 				<list-cell v-if="!isMer" image="/static/images/my/icon-merchat.png" iconColor="#9789f7" @eventClick="navTo('/pages/otc/merchant/apply', true)" :title="i18n.my.businessapply"></list-cell>
 				<list-cell v-if="isMer" image="/static/images/my/icon-merchat.png" iconColor="#543632" @eventClick="navTo('/pages/otc/merchant/merchant', true)" :title="i18n.my.business"></list-cell>
-				<list-cell image="/static/images/my/icon-help.png" iconColor="#ee883b" :title="i18n.my.help" @eventClick="navTo('/pages/set/help')"></list-cell>
+				<!-- <list-cell image="/static/images/my/icon-help.png" iconColor="#ee883b" :title="i18n.my.help" @eventClick="navTo('/pages/set/help')"></list-cell> -->
 				<!-- <list-cell icon="icon-pinglun-copy" iconColor="#54b4ef" title="问题反馈"></list-cell> -->
 				<list-cell image="/static/images/my/icon-langule.png" iconColor="#e07472" @eventClick="changeLang" :title="i18n.my.lang" ></list-cell>
-				<list-cell image="/static/images/my/icon-setting.png" iconColor="#e07472" :title="i18n.my.set" border="" @eventClick="navTo('/pages/set/set')"></list-cell>
+				<list-cell image="/static/images/my/icon-setting.png" iconColor="#e07472" :title="i18n.set.about" border="" @eventClick="navTo('/pages/set/about')"></list-cell>
 			</view>
 		</view>
 			

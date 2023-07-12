@@ -97,3 +97,10 @@ export function getConfig() {
     method: 'GET'
   })
 }
+
+export function getHelpList() {
+  return request({
+    url: '/v1/help/list',
+    method: 'GET'
+  })
+}

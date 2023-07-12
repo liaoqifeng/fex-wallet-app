@@ -38,7 +38,7 @@
 				{{i18n.withdraw.tip3}}。
 			</view>
 		</view>
-		<uni-valid-popup ref="validPopup" @ok="ok"></uni-valid-popup>
+		<uni-valid-popup type="capitalPasswd" ref="validPopup" @ok="ok"></uni-valid-popup>
 	</view>
 </template>
 
@@ -170,30 +170,31 @@
 
 <style lang='scss' scoped>
 	.container{
-		padding: $page-row-spacing;
+		
 	}
 	.coin-section{
 		background: #fff;
+		padding: $page-row-spacing;
 		.chain{
-			padding: 30upx 0upx 10upx 0upx;
+			padding: 30rpx 0rpx 10rpx 0rpx;
 		}
 		.chain .label{
 			font-size: $font-sm;
 		}
 		.chain .row{
 			display: flex;
-			padding-top: 20upx;
+			padding-top: 20rpx;
 			.item{
-				width: 160upx;
-				height: 70upx;
-				line-height: 70upx;
+				width: 160rpx;
+				height: 70rpx;
+				line-height: 70rpx;
 				background-color: $uni-color-subbg;
-				border-radius: 10upx;
-				margin-right: 20upx;
+				border-radius: 10rpx;
+				margin-right: 20rpx;
 				text-align: center;
 			}
 			.selected{
-				border: 1upx solid #007AFF;
+				border: 1rpx solid #007AFF;
 				background-color: #ffffff;
 				color: #007AFF;
 			}
@@ -202,16 +203,16 @@
 			background-color: $uni-color-subbg;
 			display:flex;
 			align-items:center;
-			padding: 20upx 10upx 20upx 10upx;
+			padding: 20rpx 10rpx 20rpx 10rpx;
 			.col{
 				font-size: $font-lg;
 				color: $font-color-dark;
 				flex:1;
 				.icon{
-					width: 60upx;
-					height: 60upx;
+					width: 60rpx;
+					height: 60rpx;
 					vertical-align: middle;
-					margin-right: 10upx;
+					margin-right: 10rpx;
 				}
 				.coin{
 					font-weight: 400;
@@ -223,8 +224,8 @@
 				}
 			}
 			.coinLogo {
-			    width: 46upx;
-				height: 46upx;
+			    width: 46rpx;
+				height: 46rpx;
 			    margin-right: 8px;
 			    display: inline-block;
 			    vertical-align: middle;
@@ -243,16 +244,16 @@
 			}
 		}
 		.form{
-			padding: 10upx 0;
+			padding: 10rpx 0;
 			display: flex;
 			flex-direction: column;
 			.label{
-				margin-top: 30upx;
+				margin-top: 30rpx;
 				color: $font-color-dark;
 				font-size: $font-sm;
 			}
 			.balance{
-				margin-top: 10upx;
+				margin-top: 10rpx;
 				color: $font-color-light;
 				font-size: $font-sm;
 			}
@@ -260,10 +261,10 @@
 				width: 100%;
 			}
 			.volume{
-				width: 400upx;
+				width: 400rpx;
 			}
 			.input{
-				padding: 10upx 0;
+				padding: 10rpx 0;
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
@@ -281,8 +282,8 @@
 			}
 		}
 		.desc{
-			margin-top: 30upx;
-			margin-bottom: 20upx;
+			margin-top: 30rpx;
+			margin-bottom: 20rpx;
 			font-size: $font-base;
 			color: $font-color-light;
 			display: flex;
@@ -290,7 +291,7 @@
 		}
 	}
 	.submit{
-		margin: 60upx 0upx;
+		margin: 60rpx 0rpx;
 		background: $uni-color-blue;
 		color: #fff;
 		font-size: $font-md;

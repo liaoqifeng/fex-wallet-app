@@ -3,15 +3,15 @@
 		<view class="logo">
 			<image src="../../static/about_logo.png" mode="widthFix"></image>
 		</view>
-		<view class="list-cell b-b m-t"  hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">{{i18n.about.protocol}}</text>
+		<view @click="navTo('/pages/set/aboutDetail?type=service')" class="list-cell b-b m-t"  hover-class="cell-hover" :hover-stay-time="50">
+			<text class="cell-tit">{{i18n.about.service}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<view class="list-cell b-b"  hover-class="cell-hover" :hover-stay-time="50">
+		<view @click="navTo('/pages/set/aboutDetail?type=privacy')" class="list-cell b-b"  hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">{{i18n.about.privacy}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		<view class="list-cell b-b"  hover-class="cell-hover" :hover-stay-time="50">
+		<view @click="navTo('/pages/set/aboutDetail?type=law')" class="list-cell b-b"  hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">{{i18n.about.law}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>

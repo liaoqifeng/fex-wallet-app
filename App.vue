@@ -25,7 +25,10 @@
 				if(res.data && res.data.huobiDomain){
 					ws = res.data.huobiDomain
 				}
-				this.$store.dispatch('WEBSOCKET_INIT', ws)
+				//this.$store.dispatch('WEBSOCKET_INIT', ws)
+				
+				this.$store.dispatch('TIO_CONNECT', this.$g.WS_URL)
+				//this.$ws.connect("ws://127.0.0.1:9326/ws")
 			}
 		},
 		onLaunch: function() {
@@ -52,7 +55,7 @@
 			})
 			uni.setTabBarItem({
 				index: 1,
-				text: this.$t('message').tabBar.news
+				text: this.$t('message').tabBar.trade
 			})
 			uni.setTabBarItem({
 				index: 2,
@@ -575,8 +578,8 @@
 	/* 骨架屏替代方案 */
 	.Skeleton {
 		background: #f3f3f3;
-		padding: 20upx 0;
-		border-radius: 8upx;
+		padding: 20rpx 0;
+		border-radius: 8rpx;
 	}
 
 	/* 图片载入替代方案 */
@@ -632,9 +635,9 @@
 	/* button样式改写 */
 	uni-button,
 	button {
-		height: 80upx;
-		line-height: 80upx;
-		font-size: $font-lg + 2upx;
+		height: 80rpx;
+		line-height: 80rpx;
+		font-size: $font-lg;
 		font-weight: normal;
 
 		&.no-border:before,
@@ -681,5 +684,14 @@
 	 }
 	 .lower-text{
 	 	 color: $uni-color-lower
+	 }
+	 .upper-bg{
+	 	background-color: $uni-color-upper
+	 }
+	 .lower-bg{
+	 	 background-color: $uni-color-lower
+	 }
+	 .equals-bg{
+		 background-color: $font-color-base;
 	 }
 </style>

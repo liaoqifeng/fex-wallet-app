@@ -15,7 +15,7 @@
 					<text class="v">{{i18n.otc.order.payed}}</text>
 				</view>
 				<view v-if="side == 'BUY'">{{i18n.otc.order.tip6}}</view>
-				<view v-if="side == 'SELL'">{{i18n.otc.order.tip7}} {{order.totalPrice | fixed(2)}}</view>
+				<view v-if="side == 'SELL'">{{i18n.otc.order.tip7}} {{currencysMap[order.paycoin]}}{{order.totalPrice | fixed(2)}}</view>
 			</view>
 			<view class="status" v-if="order.status == 2">
 				<view class="s">
@@ -35,16 +35,16 @@
 				</view>
 				{{i18n.otc.order.tip10}}
 			</view>
-			<view class="concat" v-if="order.status == 0 || order.status == 1">
+			<!-- <view class="concat" v-if="order.status == 0 || order.status == 1">
 				<text class="iconfont icon-telephone"></text>
 				<view>{{i18n.otc.order.phone}}</view>
-			</view>
+			</view> -->
 		</view>
 		<view class="amount-wrapper">
-			<text class="total">{{i18n.otc.order.orderAmount}}: ￥{{order.totalPrice | fixed(2)}}</text>
+			<text class="total">{{i18n.otc.order.orderAmount}}: {{currencysMap[order.paycoin]}}{{order.totalPrice | fixed(2)}}</text>
 			<view class="info">
 				<view class="price">
-					<view><text class="label">{{i18n.otc.price}}</text><text class="num">￥{{order.price | fixed(2)}}</text></view>
+					<view><text class="label">{{i18n.otc.price}}</text><text class="num">{{currencysMap[order.paycoin]}}{{order.price | fixed(2)}}</text></view>
 					<view><text class="label">{{i18n.otc.vol}}</text><text class="num">{{order.volume | fixed(2)}} {{order.coin}}</text></view>
 				</view>
 				<view class="coin">
@@ -68,15 +68,24 @@
 			</view>
 		</view>
 		<view class="line"></view>
-		<view v-if="side == 'BUY' && order.status != 3" class="secrity-tip little-line">{{i18n.otc.order.tip11}} {{currentPay.name}} {{i18n.otc.order.tip12}}</view>
+		<view v-if="side == 'BUY' && order.status != 3" class="secrity-tip little-line">
+			{{i18n.otc.order.tip11}} {{i18n.payment.method[currentPay.symbol]}} {{i18n.otc.order.tip12}}
+		</view>
 		<!-- 列表 -->
 		<view v-if="order.status != 3" class="transfer-info">
 			<view class="list">
 				<view class="item little-line">
-					<view class="left">{{currentPay.name}}</view>
+					<view class="left">{{i18n.payment.method[currentPay.symbol]}}</view>
 					<view class="right"><text v-if="side == 'BUY' && order.status == 0" class="change" @click="changePay()">{{i18n.otc.order.tip13}}</text></view>
 				</view>
-				<view class="item little-line">
+				<view class="item little-line" v-for="(item, index) in currentPay.fieldDetail" :key="item.symbol">
+					<view class="left">{{i18n.payment[item.field]}}</view>
+					<view class="right">
+						<text v-if="item.type == 'text'">{{account[item.field]}}</text>
+						<image v-if="item.type == 'qrcode'" v-show="account[item.field]" :src="account[item.field]"></image>
+					</view>
+				</view>
+				<!-- <view class="item little-line">
 					<view class="left">{{i18n.otc.order.username}}</view>
 					<view class="right">{{account.username}}</view>
 				</view>
@@ -95,9 +104,10 @@
 				<view v-show="currentPay.code == 'UnionPay'" class="item">
 					<view class="left">{{i18n.otc.order.branch}}</view>
 					<view class="right">{{account.subBranch}}</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
+		
 		<view class="footer" v-if="side == 'BUY' && order.status == 0">
 			<view class="safe-tip">
 				{{i18n.otc.order.tip14}}
@@ -109,13 +119,19 @@
 		</view>
 		<view class="footer" v-if="side == 'BUY' && order.status == 1">
 			<view class="btns">
-				<!-- <button class="pay appy">申诉</button> -->
+				<button class="pay appy" @click="navTo('/pages/otc/order/appeal?id='+order.id)">{{i18n.otc.order.status.appeal}}</button>
 			</view>
 		</view>
 		<view class="footer" v-if="side == 'SELL' && order.status == 1">
 			<view class="btns">
-				<!-- <button class="pay appy">申诉</button> -->
+				<button class="pay appy" @click="navTo('/pages/otc/order/appeal?id='+order.id)">{{i18n.otc.order.status.appeal}}</button>
 				<button @click="complete" class="pay">{{i18n.otc.order.tip16}}</button>
+			</view>
+		</view>
+		<view class="footer" v-if="order.status == 4">
+			<view class="btns">
+				<button class="pay appy" @click="cancelAppeal" v-if="appealDetail.isSelf">{{i18n.otc.order.cancelAppeal}}</button>
+				<button class="pay" @click="navTo('/pages/otc/order/appeal?id='+order.id)">{{i18n.otc.order.searchAppeal}}</button>
 			</view>
 		</view>
 	</view>
@@ -142,21 +158,30 @@
 				payment: undefined,
 				payCodes: [],
 				payLabels: [],
-				currentPay: {
-					code: undefined,
-					name: undefined
-				},
-				account: {}
+				currentPay: {},
+				account: {},
+				currencysMap: {},
+				currencys: [],
+				paymentSettingList: [],
+				paymentMethodList: [],
+				appealDetail: {}
 			};
 		},
 		onShow() {
 			this.$fire.$emit('refreshCoin')
+			this.loadData();
 		},
 		onLoad(options){
+			this.id = options.id
 			this.currencyList().then(res => {
-				this.payment = res.data.payment
-				this.id = options.id
-				this.loadData();
+				let currencyList = res.data.currency
+				let map = {}
+				for(let i = 0; i < currencyList.length; i++){
+					map[currencyList[i].code] = currencyList[i].symbol
+				}
+				this.currencysMap = map
+				this.currencys = currencyList
+				
 			})
 			
 		},
@@ -165,7 +190,7 @@
 		},
 		methods: {
 			...mapActions('common', ['currencyList']),
-			...mapActions('otc', ['getOrder', 'cancelOrder', 'payOrder', 'completeOrder']),
+			...mapActions('otc', ['appealOrderCancel', 'getAppealDetail', 'getOrder', 'cancelOrder', 'payOrder', 'completeOrder', 'getActivePaymentMethodList', 'getPaymentSetting']),
 			cancel(){
 				let $this = this;
 				uni.showModal({
@@ -194,7 +219,7 @@
 				    success: function (res) {
 				        if (res.confirm) {
 							uni.showLoading({})
-							$this.payOrder({id: $this.id, payment: $this.currentPay.code}).then(res =>{
+							$this.payOrder({id: $this.id, payment: $this.currentPay.symbol}).then(res =>{
 								$this.loadData()
 								uni.hideLoading()
 								$this.$api.msg($this.i18n.otc.order.paySuccess, 1000, false, 'none', function() {})
@@ -229,36 +254,75 @@
 				uni.showActionSheet({
 					itemList: this.payLabels,
 					success: function (res) {
-						$this.currentPay = {
-							code: $this.payCodes[res.tapIndex],
-							name: $this.payLabels[res.tapIndex]
-						}
-						$this.account = JSON.parse($this.merchantPays[$this.currentPay.code].account)
+						$this.getPayInfo($this.payCodes[res.tapIndex])
+						$this.account = JSON.parse($this.merchantPays[$this.currentPay.symbol])
 					}
 				})
 			},
-			async loadData(){
-				this.getOrder(this.id).then(res =>{
-					this.order = res.data.order
-					this.nickname = res.data.nickname
-					this.side = res.data.side
-					this.merchantPays = res.data.payments
-					for(let key in this.merchantPays){
-						for(let i = 0; i < this.payment.length; i++){
-							if(key === this.payment[i].code){
-								this.payCodes.push(key)
-								this.payLabels.push(this.payment[i].name)
-							}
-						}
+			getPayInfo(code){
+				for(let i = 0; i < this.paymentSettingList.length; i++){
+					if(this.paymentSettingList[i].symbol == code){
+						
+						this.currentPay = this.paymentSettingList[i]
+						this.currentPay.fieldDetail = JSON.parse(this.currentPay.fieldDetail)
+						return
 					}
-					this.currentPay = {
-						code: this.payCodes[0],
-						name: this.payLabels[0]
-					}
-					this.account = JSON.parse(this.merchantPays[this.currentPay.code])
-				}).catch(error =>{
-					
+				}
+			},
+			cancelAppeal(){
+				let $this = this
+				uni.showModal({
+				    title: $this.i18n.common.tip,
+				    content: $this.i18n.otc.order.confirmCannel,
+				    success: function (res) {
+				        if (res.confirm) {
+							uni.showLoading({})
+							$this.appealOrderCancel($this.appealDetail.id).then(res =>{
+								$this.loadData()
+								uni.hideLoading()
+								$this.$api.msg($this.i18n.otc.order.cannelSuccess, 1000, false, 'none', function() {})
+							}).catch(error =>{
+								uni.hideLoading()
+							})
+				        }
+				    }
+				});
+			},
+			loadAppealDetail(){
+				this.getAppealDetail(this.id).then(res => {
+					this.appealDetail = res.data
 				})
+			},
+			async loadData(){
+				
+				this.getPaymentSetting().then(setting => {
+					this.paymentSettingList = setting.data
+					
+					this.getActivePaymentMethodList().then(method => {
+						this.paymentMethodList = method.data
+					})
+					
+					this.getOrder(this.id).then(res =>{
+						this.order = res.data.order
+						if(this.order.status == 4){
+							this.loadAppealDetail()
+						}
+						
+						this.nickname = res.data.nickname
+						this.side = res.data.side
+						this.merchantPays = res.data.payments
+						
+						for(let key in this.merchantPays){
+							this.payCodes.push(key)
+							this.payLabels.push(this.i18n.payment.method[key])
+						}
+						this.getPayInfo(this.payCodes[0])
+						this.account = JSON.parse(this.merchantPays[this.currentPay.symbol])
+					}).catch(error =>{
+						
+					})
+				})
+				
 			}
 		}
 	}

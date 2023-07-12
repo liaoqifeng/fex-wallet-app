@@ -29,7 +29,10 @@ import {
 	addPaymentMethod,
 	updatePaymentMethod,
 	activePaymentMethod,
-	deletePaymentMethod
+	deletePaymentMethod,
+	appealOrder,
+	getAppealDetail,
+	appealOrderCancel
 } from '@/api/otc'
 import {} from './../mutations_type'
 
@@ -389,7 +392,40 @@ const otc = {
 					reject(error)
 				})
 			})
-		}
+		},
+		appealOrder({
+			commit
+		}, data) {
+			return new Promise((resolve, reject) => {
+				appealOrder(data).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		getAppealDetail({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				getAppealDetail(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		appealOrderCancel({
+			commit
+		}, id) {
+			return new Promise((resolve, reject) => {
+				appealOrderCancel(id).then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
 	}
 }
 

@@ -4,15 +4,15 @@
 			<text class="cell-tit">{{form.coin == null ? i18n.otc.advert.coin : form.coin}}</text>
 			<text class="cell-more" @click="selectCoin">{{i18n.common.select}}</text>
 		</view>
-		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
+		<!-- <view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">{{lable.paycoin == null ? '法币' : lable.paycoin}}</text>
-			<text class="cell-more" @click="selectCurrency">{{i18n.common.select}}</text>
-		</view>
+			<text class="cell-more" @click="selectCurrency">请选择</text>
+		</view> -->
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">{{lable.payment == null ? i18n.otc.advert.payMethod : lable.payment}}</text>
 			<checkbox-group @change="selectPayment">
-				<label v-for="(item, i) in paymentMethodList" :key="item.id">
-					<checkbox :value="item.id+''" style="transform:scale(0.7)" /><text class="cell-side">{{i18n.payment.method[item.symbol]}}</text>
+				<label v-for="(item, i) in payments" :key="item.code">
+					<checkbox :value="item.code" style="transform:scale(0.7)" /><text class="cell-side">{{item.name}}</text>
 				</label>
 			</checkbox-group>
 		</view>
@@ -74,7 +74,7 @@
 				form: {
 					coin: undefined,
 					side: 'SELL',
-					paycoin: '',
+					paycoin: 'CNY',
 					payment: undefined,
 					price: undefined,
 					volume: undefined,
@@ -92,9 +92,7 @@
 				currencys: [],
 				payments: [],
 				payTypes: [],
-				fiatCoins: [],
-				paymentSettingList: [],
-				paymentMethodList: []
+				fiatCoins: []
 			};
 		},
 		onShow() {
@@ -103,20 +101,22 @@
 			})
 		},
 		onLoad(){
-			let _this = this
-			_this.currencyList().then(res => {
-				_this.currencys = res.data.currency
-				
-				_this.getPaymentSetting().then(setting => {
-					_this.paymentSettingList = setting.data
-					
-					_this.getActivePaymentMethodList().then(method => {
-						_this.paymentMethodList = method.data
-						if(!_this.paymentMethodList || this.paymentMethodList.length <= 0){
-							_this.navTo('/pages/payment/method')
-							return
+			this.currencyList().then(res => {
+				this.currencys = res.data.currency
+				//this.payments = res.data.payment
+				this.getUsePayInfo().then(pay =>{
+					let p = res.data.payment
+					for(let i = 0; i < p.length; i++){
+						if(pay.data[p[i].code]){
+							this.payments.push(p[i])
 						}
-					})
+					}
+					if(!this.payments || this.payments.length <= 0){
+						this.navTo('/pages/user/payType')
+						return
+					}
+				}).catch(error =>{
+					
 				})
 			})
 			
@@ -130,7 +130,7 @@
 		},
 		methods:{
 			...mapActions('common', ['currencyList', 'fiatList']),
-			...mapActions('otc', ['getPaymentSetting', 'getActivePaymentMethodList', 'addAdvert', 'getUsePayInfo']),
+			...mapActions('otc', ['addAdvert', 'getUsePayInfo']),
 			submit(){
 				if(!this.loginInfo.isCapitalPasswd){
 					uni.showModal({
@@ -210,7 +210,7 @@
 					limitTime: undefined,
 					description: undefined,
 					capitalPasswd: undefined,
-					endDate: ''
+					endDate: '2020-05-26 22:04:00'
 				}
 			},
 			selectSide(e){
@@ -223,7 +223,6 @@
 				} else {
 					this.form.payment = undefined
 				}
-				console.log(this.form.payment)
 			},
 			selectCoin(){
 				let $this = this
@@ -248,7 +247,7 @@
 				let array = []
 				let currencyList = this.currencys
 				currencyList.forEach((item, i) => {
-					array.push(item.code)
+					array.push(item.name)
 				})
 				let form = this.form
 				let lable = this.lable
@@ -256,7 +255,7 @@
 					itemList: array,
 					success: function (res) {
 						let d = currencyList[res.tapIndex]
-						lable.paycoin = d.code
+						lable.paycoin = d.name
 						form.paycoin = d.code
 						//console.log(this.form.paycoin)
 					}

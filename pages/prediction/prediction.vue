@@ -99,7 +99,7 @@
 			<view class="item">
 				<view class="menus">
 					<button @click="navTo('/pages/prediction/history')" class="sc-hKFxyN kUxtnz" scale="sm"><image src="../../static/icon-pre1.png"/></button>
-					<button @click="navTo(`/pages/public/kline?symbol=${prediction.priceSymbol}`)" class="sc-hKFxyN dRonwK sc-hBMUJo cEIpjQ" scale="sm"><image src="../../static/icon-pre2.png"/></button>
+					<button @click="navTo(`/pages/prediction/kline?symbol=${prediction.priceSymbol}`)" class="sc-hKFxyN dRonwK sc-hBMUJo cEIpjQ" scale="sm"><image src="../../static/icon-pre2.png"/></button>
 					<button @click="navTo('/pages/prediction/history')" class="sc-hKFxyN dRonwK sc-hBMUJo cEIpjQ" scale="sm"><image src="../../static/icon-pre3.png"/></button>
 				</view>
 			</view>
@@ -239,6 +239,8 @@
 				uni.showModal({
 				    title: this.i18n.common.tip,
 				    content: this.i18n.prediction.tip1 + ' ' + this.positionMap[this.betForm.position] + ' ' + this.i18n.prediction.bet +'?',
+					cancelText: this.i18n.popup.cancel,
+					confirmText: this.i18n.popup.confirm,
 				    success: function (res) {
 				        if (res.confirm) {
 				            _this.predictionBet(_this.betForm).then(res =>{
