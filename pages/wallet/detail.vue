@@ -12,12 +12,12 @@
 				<view class="s-row">
 					<view class="col subtitle row-title">{{i18n.wallet.avalible}}</view>
 					<view class="col subtitle row-title">{{i18n.wallet.frozen}}</view>
-					<view class="col r subtitle row-title">{{i18n.wallet.amount}}(CNY)</view>
+					<view class="col r subtitle row-title">{{i18n.wallet.amount}}(USD)</view>
 				</view>
 				<view class="s-row">
 					<view class="col subtitle row-amount">{{account.normalBalance | fixD(account.showPrecision)}}</view>
 					<view class="col subtitle row-amount">{{account.frozenBalance | fixD(account.showPrecision)}}</view>
-					<view class="col r subtitle row-amount">{{account.priceCny | fixD(2)}}</view>
+					<view class="col r subtitle row-amount">{{account.priceUsd | fixD(2)}}</view>
 				</view>
 			</view>
 		</view>
@@ -39,7 +39,8 @@
 					<scroll-view class="s-list" :enableBackToTop="enableBackToTop" :scroll-y="scrollY" @scrolltolower="loadMore">
 						<u-empty :text="i18n.common.noData" :show="empty" mode="data" margin-top="10"></u-empty>
 						<view class="s-row little-line" v-for="(item, i) in records" :key="item.id">
-							<view class="col subtitle row-amount">{{item.amount | fixD(account.showPrecision)}}</view>
+							<view class="col subtitle row-amount" v-if="filterIndex == 1">{{item.amount | fixD(account.showPrecision)}}</view>
+							<view class="col subtitle row-amount" v-if="filterIndex == 0">{{item.payAmount | fixD(account.showPrecision)}}</view>
 							<view class="col subtitle row-amount">{{currentStatusMap[item.status]}}</view>
 							<view class="col r subtitle row-amount">{{item.ctime | moment('HH:mm MM/DD')}}</view>
 						</view>
@@ -175,7 +176,11 @@
 				}
 			},
 			async loadRecords(){
-				this.loadWithdraw()
+				if(this.filterIndex == 0){
+					this.loadWithdraw()
+				} else {
+					this.loadDeposit()
+				}
 			},
 			loadDeposit(){
 				this.depositList(this.query).then(res =>{

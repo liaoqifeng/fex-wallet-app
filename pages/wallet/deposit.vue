@@ -22,8 +22,15 @@
 				<tki-qrcode ref="qrcode" :size="400" :onval="true" cid="qrcode" :val="qrcode.val" />
 				<view class="save" @click="save">{{i18n.recharge.qrcode}}</view>
 				<text class="title">{{i18n.recharge.rechargeAddr}}</text>
-				<text class="address">{{deposit.address}}</text>
-				<view class="copy" @click="paste">{{i18n.common.copy}}</view>
+				<view class="address">
+					<view class="value">{{deposit.address}}</view>
+					<view class="copy" @click="paste(deposit.address)">{{i18n.common.copy}}</view>
+				</view>
+				<text class="title" v-if="deposit.memo">tag/memo</text>
+				<view class="address" v-if="deposit.memo">
+					<view class="value">{{deposit.memo}}</view>
+					<view class="copy" @click="paste(deposit.memo)">{{i18n.common.copy}}</view>
+				</view>
 			</view>
 			<view class="desc">
 				{{i18n.recharge.tip1}} {{isChain ? chain.chain+'_'+coin.symbol : coin.symbol}} {{i18n.recharge.tip2}}。<br/><br/>
@@ -110,10 +117,10 @@
 			save(){
 				this.$refs.qrcode._saveCode()
 			},
-			paste() {
+			paste(v) {
 				let $this = this
 				uni.setClipboardData({
-				    data: this.deposit.address,
+				    data: v,
 				    success: function () {
 				        $this.$api.msg($this.toast.copySuccess)
 				    }
@@ -212,22 +219,31 @@
 			.title{
 				color: $font-color-light;
 				font-size: $font-sm;
-				margin: 20upx 0;
+				margin: 20rpx 0;
+				padding: 0 30rpx;
+				width: 100%;
+				text-align: left;
 			}
 			.address{
-				display: block;
-				width: 580upx;
+				width: 100%;
 				word-wrap: break-word;
 				font-size: $font-base;
-				text-align: center;
+				padding: 0 30rpx;
+				display: flex;
+				justify-content: space-between;
+				.value{
+					width: 500rpx;
+				}
+				.copy{
+					background-color: #E7EBEE;
+					font-size: 24rpx;
+					color: $font-color-light;
+					height: 50rpx;
+					line-height: 50rpx;
+					padding: 0 10rpx;
+				}
 			}
-			.copy{
-				margin: 30upx 0 0 0;
-				background-color: #E7EBEE;
-				padding: 10upx 30upx;
-				font-size: $font-base;
-				color: $font-color-light;
-			}
+			
 		}
 		.desc{
 			margin-top: 30upx;

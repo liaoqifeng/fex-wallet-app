@@ -21,11 +21,15 @@
 			<view class="form">
 				<text class="label">{{i18n.withdraw.withdrawwAddr}}</text>
 				<view class="input little-line">
-					<input type="text" v-model="form.address" :placeholder="i18n.withdraw.inputAddr" class="address"/>
+					<input type="text" v-model="form.address" :placeholder="i18n.withdraw.inputAddr" class="address" maxlength="128"/>
+				</view>
+				<text class="label" v-if="config.isMemo">tag/memo</text>
+				<view class="input little-line" v-if="config.isMemo">
+					<input type="text" v-model="form.memo" placeholder="tag/memo" class="address" maxlength="30"/>
 				</view>
 				<text class="label">{{i18n.withdraw.vol}}</text>
 				<view class="input little-line">
-					<input type="number" v-model="form.amount" :placeholder="`${i18n.withdraw.minWithdrawVol}${config.minWithdraw}`" class="volume"/>
+					<input type="number" v-model="form.amount" :placeholder="`${i18n.withdraw.minWithdrawVol}${config.minWithdraw}`" maxlength="20" class="volume"/>
 					<view class="all" @click="all">{{i18n.withdraw.all}}</view>
 				</view>
 				<view class="balance">{{i18n.withdraw.avalible}} {{account.normalBalance | fixD(config.showPrecision)}} {{account.symbol}}</view>
